@@ -12,6 +12,10 @@ COPY --link 20-envsubst.sh /docker-entrypoint.d
 
 COPY --link *.conf /nginx-configs-templates
 
+ENV NGINX_ACCESS_LOG=/var/log/nginx/access.log
+ENV NGINX_ERROR_LOG=/var/log/nginx/error.log
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+
 EXPOSE 80 443
 
 HEALTHCHECK CMD ["service", "nginx", "status"]
