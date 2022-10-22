@@ -13,7 +13,7 @@ entrypoint_log() {
 }
 
 auto_envsubst() {
-  local template_dir="/nginx-configs-templates"
+  local template_dir=${NGINX_TEMPLATES_PATH}
   local suffix=".conf"
   local main_output_dir=${NGINX_CONFIGS_PATH}
 
