@@ -17,8 +17,7 @@ Dockerfile      text
 
 *.yml           text
 
-*.conf          text
-*.sh            text eol=lf
+*.template      text
 
 .gitattributes  export-ignore
 .gitignore      export-ignore

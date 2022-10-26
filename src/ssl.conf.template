@@ -1,7 +1,7 @@
-ssl_certificate &CERT;
-ssl_certificate_key &CERT_KEY;
-ssl_dhparam &DH_PARAMS;
-ssl_trusted_certificate &TRUSTED_CERTS; # root CA and intermediate certs
+ssl_certificate $NGINX_CERT;
+ssl_certificate_key $NGINX_CERT_KEY;
+ssl_dhparam $NGINX_DH_PARAMS;
+ssl_trusted_certificate $NGINX_TRUSTED_CERTS; # root CA and intermediate certs
 
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:10m;  # about 40000 sessions

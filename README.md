@@ -26,4 +26,4 @@ Following environment variables are set in Dockerfile, but can be changed:
 - `$NGINX_DOMAIN_NAME` - the domain name of the website, defaults to `warriorslife.site`.
 - `$NGINX_USER` - the user that NGINX uses, defaults to `nginx`.
 - `$NGINX_ACCESS_LOG` and `$NGINX_ERROR_LOG` - files where NGINX logs requests and errors, default to `/var/log/nginx/access.log` and `/var/log/nginx/error.log`, which are symbolic links to `stdout` and `stderr`.
-- `$NGINX_TEMPLATES_PATH` and `$NGINX_CONFIGS_PATH` - directories, where template and final NGINX configs (except main file `nginx.conf`) are placed, default to `/nginx-configs-templates` and `/nginx-configs`.
+- `$NGINX_ENVSUBST_TEMPLATE_DIR` and `$NGINX_ENVSUBST_OUTPUT_DIR` - directories, where template and final NGINX configs (except main file `nginx.conf`) are placed, default to `/nginx-configs-templates` and `/nginx-configs`.

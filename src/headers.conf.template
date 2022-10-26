@@ -2,7 +2,7 @@
 
 include hsts.conf;
 
-add_header Report-Endpoints "endpoint=\"&REPORT_URL\", default=\"&REPORT_URL\""; # reporting api (https://web.dev/reporting-api/ and https://web.dev/reporting-api-migration/)
+add_header Report-Endpoints "endpoint=\"$NGINX_REPORT_URL\", default=\"$NGINX_REPORT_URL\""; # reporting api (https://web.dev/reporting-api/ and https://web.dev/reporting-api-migration/)
 
 add_header NEL "{ \"report_to\": \"endpoint\", \"include_subdomains\": true, , \"max_age\": 2592000 }";
 
@@ -18,6 +18,6 @@ if_modified_since off;
 add_header Last-Modified ""; # ETag and If-None-Match are better than Last-Modified and If-Modified-Since
 
 # deprecated (DEPR)
-add_header Report-To "{ \"group\": \"endpoint\", \"include_subdomains\": true, \"max_age\": 2592000, \"endpoints\": [ { \"url\": \"&REPORT_URL\" } ] }";
+add_header Report-To "{ \"group\": \"endpoint\", \"include_subdomains\": true, \"max_age\": 2592000, \"endpoints\": [ { \"url\": \"$NGINX_REPORT_URL\" } ] }";
 add_header X-Frame-Options "deny";
 add_header X-XSS-Protection "0";

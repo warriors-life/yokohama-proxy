@@ -10,7 +10,7 @@ server_tokens off; # TODO: server_tokens none (NGINX-MOD) or server_tokens "" (N
 
 proxy_cache_path /var/nginx/cache keys_zone=cache:10m inactive=1d max_size=10g;
 
-resolver &RESOLVER; # TODO: test if this is needed (TEST)
+resolver $NGINX_RESOLVER; # TODO: test if this is needed (TEST)
 
 upstream main_backend {
 	random; # TODO: if keepalived would be used, then a more intelligent algorithm could be used (SHARESTATE)
@@ -18,19 +18,19 @@ upstream main_backend {
 
 	keepalive 8; # TODO: configure (TWEAK)
 
-	server &MAIN_BACKEND; # TODO: slow_start=30s (NGINX Plus)
+	server $NGINX_MAIN_BACKEND; # TODO: slow_start=30s (NGINX Plus)
 
 	# TODO: health checks (NGINX Plus)
 }
 
 upstream chat_backend {
 	random;
-	server &CHAT_BACKEND;
+	server $NGINX_CHAT_BACKEND;
 }
 
 upstream game_backend {
 	random;
-	server &GAME_BACKEND;
+	server $NGINX_GAME_BACKEND;
 }
 
 # see https://stackoverflow.com/a/69540402 for description of headers in Nginx
@@ -51,16 +51,16 @@ map $upstream_http_cache_control $proxy_no_cache {
 server {
 	listen [::]:80;
 	listen 80;
-	server_name &DOMAIN_NAME www.&DOMAIN_NAME;
-	return 308 https://&DOMAIN_NAME$request_uri;
+	server_name $NGINX_DOMAIN_NAME www.$NGINX_DOMAIN_NAME;
+	return 308 https://$NGINX_DOMAIN_NAME$request_uri;
 }
 server {
 	listen [::]:443 ssl http2;
 	listen 443 ssl http2;
-	server_name www.&DOMAIN_NAME;
+	server_name www.$NGINX_DOMAIN_NAME;
 	include ssl.conf;
 	include hsts.conf;
-	return 308 https://&DOMAIN_NAME$request_uri;
+	return 308 https://$NGINX_DOMAIN_NAME$request_uri;
 }
 
 # main
@@ -71,7 +71,7 @@ server {
 
 	listen [::]:443 ssl http2;
 	listen 443 ssl http2;
-	server_name &DOMAIN_NAME;
+	server_name $NGINX_DOMAIN_NAME;
 
 	include ssl.conf;
 
@@ -83,13 +83,13 @@ server {
 
 	# TODO: open_file_cache? (FEAT)
 
-	error_page 400 405 &ERROR_BAD_REQUEST;
-	error_page 403 &ERROR_FORBIDDEN;
-	error_page 404 &ERROR_NOT_FOUND;
-	error_page 413 414 431 &ERROR_TOO_LARGE;
-	error_page 429 &ERROR_TOO_MANY_REQUESTS;
-	error_page 500 &ERROR_INTERNAL;
-	error_page 502 503 504 =503 &ERROR_SERVICE_UNAVAILABLE; # TODO: or maintenance (FEAT)
+	error_page 400 405 $NGINX_ERROR_BAD_REQUEST;
+	error_page 403 $NGINX_ERROR_FORBIDDEN;
+	error_page 404 $NGINX_ERROR_NOT_FOUND;
+	error_page 413 414 431 $NGINX_ERROR_TOO_LARGE;
+	error_page 429 $NGINX_ERROR_TOO_MANY_REQUESTS;
+	error_page 500 $NGINX_ERROR_INTERNAL;
+	error_page 502 503 504 =503 $NGINX_ERROR_SERVICE_UNAVAILABLE; # TODO: or maintenance (FEAT)
 	# TODO: 415? (FEAT)
 
 	# unmatched by regular expressions - ignore them
@@ -116,11 +116,11 @@ server {
 	}
 
 	# websocket - forward to the JS server
-	location = &CHAT_WEBSOCKET_URL {
+	location = $NGINX_CHAT_WEBSOCKET_URL {
 		include websocket.conf;
 		proxy_pass http://chat_backend;
 	}
-	location = &GAME_WEBSOCKET_URL {
+	location = $NGINX_GAME_WEBSOCKET_URL {
 		include websocket.conf;
 		proxy_pass http://game_backend;
 	}
@@ -132,7 +132,7 @@ server {
 
 		# proxy_set_headers are used by the backend as "default" header values
 
-		proxy_set_header Content-Security-Policy "default-src 'none'; upgrade-insecure-requests; report-uri &REPORT_URL; report-to endpoint";
+		proxy_set_header Content-Security-Policy "default-src 'none'; upgrade-insecure-requests; report-uri $NGINX_REPORT_URL; report-to endpoint";
 		proxy_set_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), interest-cohort=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), speaker-selection=(), sync-xhr=(), unoptimized-images=(), unsized-media=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()"; # wake-lock (not screen-wake-lock) is deprecated (DEPR)
 		proxy_set_header Document-Policy "document-write=?0 *;report-to=endpoint"; # TODO: update that when a list of supported policies would be available (DP)
 		proxy_set_header Feature-Policy "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; battery 'none'; camera 'none'; display-capture 'none'; document-domain 'none'; encrypted-media 'none'; execution-while-not-rendered 'none'; execution-while-out-of-viewport 'none'; fullscreen 'none'; gamepad 'none'; geolocation 'none'; gyroscope 'none'; layout-animations 'none'; legacy-image-formats 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; navigation-override 'none'; oversized-images 'none'; payment 'none'; picture-in-picture 'none'; publickey-credentials-get 'none'; speaker-selection 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; usb 'none'; vr 'none'; wake-lock 'none'; screen-wake-lock 'none'; web-share 'none'; xr-spatial-tracking 'none'"; # deprecated (DEPR)
