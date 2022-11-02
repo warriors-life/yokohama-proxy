@@ -101,6 +101,7 @@ server {
 
 	# static file with hash - remove hash from the path and serve file from build directory
 	location ~ ^((?:/[0-9a-zA-Z\-_]+)+)-[0-9a-f]{64}(\.[a-z]+)$ { # hash is 32 byte BLAKE3
+																  # TODO: use base64 with it (FEAT)
 		include static.conf;
 
 		etag off;
