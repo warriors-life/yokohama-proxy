@@ -64,7 +64,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run Snyk to check Docker image for vulnerabilities
-        uses: snyk/actions/docker@ff5c02a0e3adc5c52e2c9e7558edf2b46d69ac1f
+        uses: snyk/actions/docker@a8dd587d8a94f5663fa3d67d51abd0cc66aff244
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
