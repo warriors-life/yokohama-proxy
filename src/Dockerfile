@@ -15,6 +15,7 @@ ENV NGINX_DOMAIN_NAME=warriorslife.site
 
 ENV NGINX_USER=nginx
 
+# hadolint ignore=SC2016
 RUN ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG && \
     rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && \
 	sed -i '/exit 0/i mv -f $NGINX_ENVSUBST_OUTPUT_DIR/nginx.conf /etc/nginx' /docker-entrypoint.d/20-envsubst-on-templates.sh
