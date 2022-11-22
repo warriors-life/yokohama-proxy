@@ -34,8 +34,8 @@ upstream game_backend {
 }
 
 map $status $retry_after {
-    default '';
-    429 5;
+	default '';
+	429 5;
 }
 
 # see https://stackoverflow.com/a/69540402 for description of headers in Nginx
@@ -97,8 +97,6 @@ server {
 	error_page 502 503 504 =503 $NGINX_ERROR_SERVICE_UNAVAILABLE; # TODO: or maintenance (FEAT)
 	# TODO: 415? (FEAT)
 	# TODO: Retry-After for 503? (FEAT)
-
-	add_header Retry-After $retry_after always;
 
 	# unmatched by regular expressions - ignore them
 	location / {
