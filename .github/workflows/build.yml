@@ -41,6 +41,8 @@ jobs:
     name: Build Docker image
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@39a1a82492fd1ad19af19d61b5f748e4cb6cd1af
         with:
