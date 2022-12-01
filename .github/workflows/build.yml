@@ -1,4 +1,8 @@
-name: Build Docker image
+# TODO: use SARIF and github/codeql-action/upload-sarif when we move to GitHub Advanced Security
+# TODO: move all of this into a separate action
+# TODO: cache actions/checkout's output
+
+name: Build, test, and push Docker image
 
 on:
   push:
@@ -15,40 +19,58 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-push-image:
+  hadolint:
     if: "!contains(github.repository, 'repository-template')"
-
+    name: Lint Dockerfile with Hadolint
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout repository
+      - name: Checkout # TODO: too heavy for checking out only one file
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
-
-      - name: Lint Dockerfile with Hadolint
+      - name: Lint
         uses: hadolint/hadolint-action@4b5806eb9c6bee4954fc0e0cc3ad6175fc9782c1
         with:
           dockerfile: src/Dockerfile
           failure-threshold: style
 
+  build:
+    needs: hadolint
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@39a1a82492fd1ad19af19d61b5f748e4cb6cd1af
         with:
-          version: v0.9.1 # TODO: pin exact BuildX commit, which requires BuildX building which is about 1.5 mins
-
-      - name: Build Docker image
+          version: https://github.com/docker/buildx.git#3ed2783f341a5abdef42bbadb8d1fefe7de7a447
+      - name: Build
         uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
         with:
           context: src
-          load: true
           tags: ${{ env.IMAGE_NAME }}:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/image.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
+        with:
+          name: Image
+          path: /tmp/image.tar
 
+  snyk:
+    needs: build
+    name: Check Docker image for vulnerabilities with Snyk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        with:
+          name: Image
+          path: /tmp
+      - name: Load image
+        run: docker load --input /tmp/image.tar
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@1cc9026f51d822442cb4b872d8d7ead8cc69a018
         env:
@@ -56,16 +78,31 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}:test
 
+  push:
+    if: github.event_name != 'pull_request'
+    needs: snyk
+    name: Push Docker image to the Container registry (GitHub Packages)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936 # TODO: is needed?
+      - name: Download artifact
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        with:
+          name: Image
+          path: /tmp
+      - name: Load image
+        run: docker load --input /tmp/image.tar # TODO: does this work? Or does docker/build-push-image rebuild the image later?
       - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Extract metadata (tags, labels) for Docker
-        if: github.event_name != 'pull_request'
         id: meta
         uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
         with:
@@ -76,12 +113,12 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
             type=sha,enable={{is_default_branch}}
-
       - name: Push Docker image
-        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
         with:
           context: src
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max # TODO: are these two cache commands needed? Isn't cache already covered by the build job?
