@@ -126,7 +126,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag Docker image properly
         run: |
-          IFS=$'\n' read -a myarray <<< ${{ needs.metadata.outputs.tags }}
+          IFS=$'\n' read -a myarray <<< "${{ needs.metadata.outputs.tags }}"
           for tag in "${myarray[@]}"; do
             docker tag ${{ env.IMAGE_NAME }}:test ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:"$tag"
           done
