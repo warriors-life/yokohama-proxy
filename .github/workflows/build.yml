@@ -126,7 +126,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag Docker image properly
         run: |
-          while IFS= read -r line; do
+          while IFS= read -r tag; do
             docker tag ${{ env.IMAGE_NAME }}:test "$tag"
             echo "Tagging image $tag"
           done <<< "${{ needs.metadata.outputs.tags }}"
