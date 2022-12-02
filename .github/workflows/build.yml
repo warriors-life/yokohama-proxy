@@ -126,10 +126,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag Docker image properly
         run: |
-          IFS=$'\n' read -a myarray <<< "${{ needs.metadata.outputs.tags }}"
-          for tag in "${myarray[@]}"; do
+          while IFS= read -r line; do
             docker tag ${{ env.IMAGE_NAME }}:test "$tag"
             echo "Tagging image $tag"
-          done
+          done <<< "${{ needs.metadata.outputs.tags }}"
       - name: Push Docker image
         run: docker push -a ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # TODO: change this hack when https://github.com/docker/build-push-action/issues/17 will be truly fixed
