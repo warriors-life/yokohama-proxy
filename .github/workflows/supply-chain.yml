@@ -28,8 +28,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
-        with:
-          persist-credentials: false
+        # with:
+        #   persist-credentials: false
 
       - name: Run analysis
         uses: ossf/scorecard-action@f5cf69a998480a9e8c49e1833f0eeb0ae0b7b9f9
