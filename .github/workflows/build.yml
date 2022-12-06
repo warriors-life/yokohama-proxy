@@ -19,17 +19,20 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   hadolint:
     if: "!contains(github.repository, 'repository-template')"
     name: Lint Dockerfile with Hadolint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout # TODO: too heavy for checking out only one file
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        with:
+          persist-credentials: false
       - name: Lint
         uses: hadolint/hadolint-action@4b5806eb9c6bee4954fc0e0cc3ad6175fc9782c1
         with:
@@ -40,7 +43,6 @@ jobs:
     needs: hadolint
     name: Get Docker image metadata
     runs-on: ubuntu-latest
-    permissions: {}
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
       labels: ${{ steps.meta.outputs.labels }}
@@ -61,9 +63,13 @@ jobs:
     needs: metadata
     name: Build Docker image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        with:
+          persist-credentials: false
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@39a1a82492fd1ad19af19d61b5f748e4cb6cd1af
         with:
@@ -87,7 +93,6 @@ jobs:
     needs: build
     name: Check Docker image for vulnerabilities with Snyk
     runs-on: ubuntu-latest
-    permissions: {}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
