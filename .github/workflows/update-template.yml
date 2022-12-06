@@ -1,0 +1,32 @@
+name: Update release branch from dev in template repository
+
+on:
+  push:
+    branches:
+      - 'dev'
+
+permissions: {}
+
+jobs:
+  update-branch:
+    if: contains(github.repository, 'repository-template')
+
+    name: Update release branch from dev in template repository
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        with:
+          fetch-depth: 0
+
+      - name: Update
+        run: |
+          git checkout release
+          git branch -m release dummy
+          git branch -m dev release
+          git push -f origin release
