@@ -1,4 +1,4 @@
-# TODO: move all of this into a separate action
+# TODO: move all of this into separate actions (warriors-life/test-code-action, warriors-life/test-image-action, warriors-life/build-image-action, warriors-life/push-image-action)
 # TODO: cache actions/checkout's output
 
 name: Build, test, and push Docker image
@@ -31,7 +31,10 @@ jobs:
       - name: Harden runner
         uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
       - name: Checkout # TODO: too heavy for checking out only one file
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:
@@ -53,7 +56,10 @@ jobs:
       - name: Harden runner
         uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
@@ -76,7 +82,14 @@ jobs:
       - name: Harden runner
         uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            auth.docker.io:443
+            dl-cdn.alpinelinux.org:443
+            github.com:443
+            production.cloudflare.docker.com:443
+            registry-1.docker.io:443
       - name: Checkout
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:
@@ -108,7 +121,10 @@ jobs:
       - name: Harden runner
         uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.snyk.io:443
       - name: Download artifact
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
@@ -134,7 +150,10 @@ jobs:
       - name: Harden runner
         uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            ghcr.io:443
       - name: Download artifact
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
