@@ -90,6 +90,7 @@ jobs:
             github.com:443
             production.cloudflare.docker.com:443
             registry-1.docker.io:443
+            docker.io:443
       - name: Checkout
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:
