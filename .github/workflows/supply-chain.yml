@@ -1,3 +1,5 @@
+# TODO: use SARIF and github/codeql-action/upload-sarif when we move to GitHub Advanced Security
+
 name: Supply-chain security
 
 on:
@@ -26,6 +28,11 @@ jobs:
       contents: read
 
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:

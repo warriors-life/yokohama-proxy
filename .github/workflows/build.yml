@@ -1,4 +1,3 @@
-# TODO: use SARIF and github/codeql-action/upload-sarif when we move to GitHub Advanced Security
 # TODO: move all of this into a separate action
 # TODO: cache actions/checkout's output
 
@@ -29,6 +28,10 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
       - name: Checkout # TODO: too heavy for checking out only one file
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:
@@ -47,6 +50,10 @@ jobs:
       tags: ${{ steps.meta.outputs.tags }}
       labels: ${{ steps.meta.outputs.labels }}
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
@@ -66,6 +73,10 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
       - name: Checkout
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
         with:
@@ -94,6 +105,10 @@ jobs:
     name: Check Docker image for vulnerabilities with Snyk
     runs-on: ubuntu-latest
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
       - name: Download artifact
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
@@ -116,6 +131,10 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        with:
+          egress-policy: audit
       - name: Download artifact
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
