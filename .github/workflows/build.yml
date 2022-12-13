@@ -1,5 +1,6 @@
 # TODO: move all of this into separate actions (warriors-life/test-code-action, warriors-life/test-image-action, warriors-life/build-image-action, warriors-life/push-image-action)
 # TODO: cache actions/checkout's output
+# TODO: use SARIF and github/codeql-action/upload-sarif when we'll move to GitHub Advanced Security
 
 name: Build, test, and push Docker image
 
@@ -12,7 +13,10 @@ on:
       - 'v*'
   pull_request:
     branches:
+      - 'release'
       - 'dev'
+  schedule:
+    - cron: '30 1 * * 6' # Weekly on Saturdays
 
 env:
   REGISTRY: ghcr.io
@@ -45,8 +49,44 @@ jobs:
           dockerfile: src/Dockerfile
           failure-threshold: style
 
+  scorecard:
+    if: "!contains(github.repository, 'repository-template')"
+    name: Check supply chain with Scorecard
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            api.osv.dev:443
+            auth.docker.io:443
+            bestpractices.coreinfrastructure.org:443
+            github.com:443
+            index.docker.io:443
+      - name: Checkout code
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        with:
+          persist-credentials: false
+      - name: Run analysis
+        uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          repo_token: ${{ secrets.SCORECARD_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
+        with:
+          name: Scorecard output
+          path: results.sarif
+
   metadata:
-    needs: hadolint
+    if: "!contains(github.repository, 'repository-template')"
     name: Get Docker image metadata
     runs-on: ubuntu-latest
     outputs:
@@ -70,7 +110,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
-            type=sha,enable={{is_default_branch}}
+            type=sha,prefix={{branch}}-
+            type=schedule,pattern=weekly
 
   build:
     needs: metadata
@@ -142,7 +183,7 @@ jobs:
 
   push:
     if: github.event_name != 'pull_request'
-    needs: [snyk, metadata]
+    needs: [hadolint, scorecard, snyk, metadata]
     name: Push Docker image to the Container registry (GitHub Packages)
     runs-on: ubuntu-latest
     permissions:
