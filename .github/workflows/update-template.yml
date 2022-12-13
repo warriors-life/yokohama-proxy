@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
@@ -28,7 +28,7 @@ jobs:
             github.com:443
 
       - name: Checkout
-        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
         with:
           fetch-depth: 0
 

@@ -29,14 +29,14 @@ jobs:
       contents: read
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
           allowed-endpoints: >
             github.com:443
       - name: Checkout # TODO: too heavy for checking out only one file
-        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
         with:
           persist-credentials: false
       - name: Lint
@@ -54,7 +54,7 @@ jobs:
       labels: ${{ steps.meta.outputs.labels }}
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
@@ -80,7 +80,7 @@ jobs:
       contents: read
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
@@ -92,15 +92,15 @@ jobs:
             registry-1.docker.io:443
             docker.io:443
       - name: Checkout
-        uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
         with:
           persist-credentials: false
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@39a1a82492fd1ad19af19d61b5f748e4cb6cd1af
+        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325
         with:
-          version: https://github.com/docker/buildx.git#3ed2783f341a5abdef42bbadb8d1fefe7de7a447
+          version: https://github.com/docker/buildx.git#ed00243a0ce2a0aee75311b06e32d33b44729689
       - name: Build
-        uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
+        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
         with:
           context: src
           tags: ${{ env.IMAGE_NAME }}:test
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
@@ -134,7 +134,7 @@ jobs:
       - name: Load image
         run: docker load --input /tmp/image.tar
       - name: Run Snyk to check Docker image for vulnerabilities
-        uses: snyk/actions/docker@1cc9026f51d822442cb4b872d8d7ead8cc69a018
+        uses: snyk/actions/docker@7fad562681122205233d1242c3bb39598c5393da
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -149,7 +149,7 @@ jobs:
       packages: write
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@0a5820a2ec510d2521c1715d24860fc8cd06400a
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
           egress-policy: block
