@@ -7,10 +7,9 @@ name: Build, test, and push Docker image
 on:
   push:
     branches:
-      - 'release'
-      - 'dev'
+      - **
     tags:
-      - 'v*'
+      - v*
   pull_request:
     branches:
       - 'release'
@@ -21,6 +20,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  NODE_ENV: ${{ (github.ref == 'ref/heads/dev' || github.base_ref == 'ref/heads/dev') && 'development' || 'release' }}
 
 permissions: {}
 
