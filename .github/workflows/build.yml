@@ -7,9 +7,9 @@ name: Build, test, and push Docker image
 on:
   push:
     branches:
-      - *
+      - '**'
     tags:
-      - v*
+      - 'v*'
   pull_request:
     branches:
       - 'release'
