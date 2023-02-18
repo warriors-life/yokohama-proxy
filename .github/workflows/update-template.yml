@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   update-branch:
-    if: contains(github.repository, 'repository-template')
+    if: contains(github.repository, '.warriors-life-template')
 
     name: Update release branch from dev in template repository
 

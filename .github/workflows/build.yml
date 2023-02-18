@@ -26,7 +26,7 @@ permissions: {}
 
 jobs:
   hadolint:
-    if: "!contains(github.repository, 'repository-template')"
+    if: "!contains(github.repository, '.warriors-life-template')"
     name: Lint Dockerfile with Hadolint
     runs-on: ubuntu-latest
     permissions:
@@ -50,7 +50,7 @@ jobs:
           failure-threshold: style
 
   scorecard:
-    if: "!contains(github.repository, 'repository-template')"
+    if: "!contains(github.repository, '.warriors-life-template')"
     name: Check supply chain with Scorecard
     runs-on: ubuntu-latest
     permissions:
@@ -78,15 +78,15 @@ jobs:
         with:
           results_file: results.sarif
           results_format: sarif
-          repo_token: ${{ secrets.SCORECARD_TOKEN }}
-      - name: Upload artifact
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload output
         uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
         with:
           name: Scorecard output
           path: results.sarif
 
   metadata:
-    if: "!contains(github.repository, 'repository-template')"
+    if: "!contains(github.repository, '.warriors-life-template')"
     name: Get Docker image metadata
     runs-on: ubuntu-latest
     outputs:
@@ -149,10 +149,10 @@ jobs:
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/image.tar
           labels: ${{ needs.metadata.outputs.labels }}
-      - name: Upload artifact
+      - name: Upload Docker image
         uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
         with:
-          name: Image
+          name: Docker image
           path: /tmp/image.tar
 
   snyk:
@@ -167,10 +167,10 @@ jobs:
           egress-policy: block
           allowed-endpoints: >
             api.snyk.io:443
-      - name: Download artifact
+      - name: Download Docker image
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
-          name: Image
+          name: Docker image
           path: /tmp
       - name: Load image
         run: docker load --input /tmp/image.tar
@@ -183,7 +183,7 @@ jobs:
 
   push:
     if: github.event_name != 'pull_request'
-    needs: [hadolint, scorecard, snyk, metadata]
+    needs: [hadolint, scorecard, snyk, metadata, test-nginx, test-gixy]
     name: Push Docker image to the Container registry (GitHub Packages)
     runs-on: ubuntu-latest
     permissions:
@@ -196,10 +196,10 @@ jobs:
           egress-policy: block
           allowed-endpoints: >
             ghcr.io:443
-      - name: Download artifact
+      - name: Download Docker image
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
-          name: Image
+          name: Docker image
           path: /tmp
       - name: Load image
         run: docker load --input /tmp/image.tar
@@ -217,3 +217,72 @@ jobs:
           done <<< "${{ needs.metadata.outputs.tags }}"
       - name: Push Docker image
         run: docker push -a ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # TODO: change this hack when https://github.com/docker/build-push-action/issues/17 will be truly fixed
+
+  test-nginx:
+    needs: build
+    name: Test Nginx configuration
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: test
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+      - name: Download Docker image
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        with:
+          name: Docker image
+          path: /tmp
+      - name: Load image
+        run: docker load --input /tmp/image.tar
+      - name: Checkout
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        with:
+          persist-credentials: false
+      - name: Generate SSL certificates
+        run: |
+          openssl req -x509 -config ssl-config/openssl-ca.conf -out ssl/warriorslife.site.fullchain.crt -keyout ssl-config/ca.key -noenc
+          openssl req -CA ssl/warriorslife.site.fullchain.crt -CAkey ssl-config/ca.key -config ssl-config/openssl-cert.conf -out ssl/warriorslife.site.crt -keyout ssl/warriorslife.site.key -noenc
+      - name: Run nginx -t
+        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/ssl,dst=/ssl,ro ${{ env.IMAGE_NAME }}:test nginx -t
+
+  test-gixy:
+    needs: build
+    name: Test Nginx configuration with Gixy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: test
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            docker.io:443
+      - name: Download Docker image
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        with:
+          name: Docker image
+          path: /tmp
+      - name: Load image
+        run: docker load --input /tmp/image.tar
+      - name: Checkout # TODO: too heavy for checking out only one file
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        with:
+          persist-credentials: false
+      - name: Run Gixy test
+        run: |
+          docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx ${{ env.IMAGE_NAME }}:test nginx -v
+          docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b

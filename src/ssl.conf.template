@@ -1,7 +1,7 @@
-ssl_certificate $NGINX_CERT;
+ssl_certificate $NGINX_CERT; # main certificate and intermediates
 ssl_certificate_key $NGINX_CERT_KEY;
 ssl_dhparam $NGINX_DH_PARAMS;
-ssl_trusted_certificate $NGINX_TRUSTED_CERTS; # root CA and intermediate certs
+ssl_trusted_certificate $NGINX_TRUSTED_CERTS; # root CA and intermediates
 
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:10m;  # about 40000 sessions
@@ -16,9 +16,11 @@ ssl_prefer_server_ciphers off;
 ssl_stapling on;
 ssl_stapling_verify on;
 
-ssl_handshake_timeout 10s;
+# TODO: Maybe use encrypted private key and ssl_password_file (FEAT)
 
 # TODO: Change from "Intermediate" configuration to "Modern" when it would be appropriate to drop support for Android 9- (DEPR)
 # TODO: ssl_buffer_size (TWEAK)
 # TODO: ssl_early_data? (FEAT)
 # TODO: ssl_verify_client? (FEAT)
+
+# TODO: SSL for streams (STREAM)

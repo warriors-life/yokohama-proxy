@@ -8,3 +8,6 @@ npm-debug.log
 .vs/
 
 node_modules/
+
+*.crt
+*.key
