@@ -73,17 +73,18 @@ jobs:
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
         with:
           persist-credentials: false
-      - name: Run analysis
-        uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload output
-        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
-        with:
-          name: Scorecard output
-          path: results.sarif
+      # TODO: disabled until GraphQL will start to support fine-grained tokens
+      # - name: Run analysis
+        # uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d
+        # with:
+          # results_file: results.sarif
+          # results_format: sarif
+          # repo_token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload output
+        # uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
+        # with:
+          # name: Scorecard output
+          # path: results.sarif
 
   metadata:
     if: "!contains(github.repository, '.warriors-life-template')"
@@ -235,6 +236,10 @@ jobs:
           egress-policy: block
           allowed-endpoints: >
             github.com:443
+      - name: Checkout
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        with:
+          persist-credentials: false
       - name: Download Docker image
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
@@ -242,10 +247,6 @@ jobs:
           path: /tmp
       - name: Load image
         run: docker load --input /tmp/image.tar
-      - name: Checkout
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
-        with:
-          persist-credentials: false
       - name: Generate SSL certificates
         run: |
           openssl req -x509 -config ssl-config/openssl-ca.conf -out ssl/warriorslife.site.fullchain.crt -keyout ssl-config/ca.key -noenc
@@ -271,6 +272,10 @@ jobs:
           allowed-endpoints: >
             github.com:443
             docker.io:443
+      - name: Checkout # TODO: too heavy for checking out only one file
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        with:
+          persist-credentials: false
       - name: Download Docker image
         uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
@@ -278,11 +283,7 @@ jobs:
           path: /tmp
       - name: Load image
         run: docker load --input /tmp/image.tar
-      - name: Checkout # TODO: too heavy for checking out only one file
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
-        with:
-          persist-credentials: false
       - name: Run Gixy test
         run: |
           docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx ${{ env.IMAGE_NAME }}:test nginx -v
-          docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b
+          docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy:v0.1.22@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b
