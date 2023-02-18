@@ -169,7 +169,7 @@ jobs:
           allowed-endpoints: >
             api.snyk.io:443
       - name: Download Docker image
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: Docker image
           path: /tmp
@@ -198,7 +198,7 @@ jobs:
           allowed-endpoints: >
             ghcr.io:443
       - name: Download Docker image
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: Docker image
           path: /tmp
@@ -241,7 +241,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Download Docker image
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: Docker image
           path: /tmp
@@ -279,7 +279,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Download Docker image
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: Docker image
           path: /tmp
