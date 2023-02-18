@@ -2,7 +2,7 @@
 # TODO: cache actions/checkout's output
 # TODO: use SARIF and github/codeql-action/upload-sarif when we'll move to GitHub Advanced Security
 
-name: Build, test, and push Docker image
+name: Build
 
 on:
   push:
@@ -268,10 +268,7 @@ jobs:
         uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
         with:
           disable-sudo: true
-          egress-policy: block
-          allowed-endpoints: >
-            github.com:443
-            docker.io:443
+          egress-policy: audit
       - name: Checkout # TODO: too heavy for checking out only one file
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
         with:
