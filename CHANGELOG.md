@@ -7,5 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Created this repository, moved NGINX configs here.
+- Added nginx -t and Gixy tests.
 
 [Unreleased]: https://github.com/warriors-life/warriors-life-nginx-proxy/commits/dev
