@@ -118,6 +118,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      test-tag: ${{ steps.set-outputs.outputs.test-tag }}
+      run-snyk: ${{ steps.set-outputs.outputs.run-snyk }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@c8454efe5d0bdefd25384362fe217428ca277d57
@@ -139,11 +142,16 @@ jobs:
         uses: docker/setup-buildx-action@f03ac48505955848960e80bbb68046aa35c7b9e7
         with:
           version: https://github.com/docker/buildx.git#ed00243a0ce2a0aee75311b06e32d33b44729689
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "test-tag=${{ env.IMAGE_NAME }}:test" >> $GITHUB_OUTPUT
+          echo "run-snyk=${{ secrets.SNYK_TOKEN != '' }}" >> $GITHUB_OUTPUT
       - name: Build
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
           context: src
-          tags: ${{ env.IMAGE_NAME }}:test
+          tags: ${{ steps.set-outputs.outputs.test-tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/image.tar
@@ -155,7 +163,7 @@ jobs:
           path: /tmp/image.tar
 
   snyk:
-    if: secrets.SNYK_TOKEN != ''
+    if: needs.build.outputs.use-snyk == 'true'
     needs: build
     name: Check Docker image for vulnerabilities with Snyk
     runs-on: ubuntu-latest
@@ -179,11 +187,11 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ env.IMAGE_NAME }}:test
+          image: ${{ needs.build.outputs.test-tag }}
 
   push:
     if: github.event_name != 'pull_request'
-    needs: [hadolint, scorecard, snyk, metadata, test-nginx, test-gixy]
+    needs: [hadolint, scorecard, snyk, metadata, build, test-nginx, test-gixy]
     name: Push Docker image to the Container registry (GitHub Packages)
     runs-on: ubuntu-latest
     permissions:
@@ -213,7 +221,7 @@ jobs:
         run: |
           while IFS= read -r tag; do
             echo "Tagging image $tag"
-            docker tag ${{ env.IMAGE_NAME }}:test "$tag"
+            docker tag ${{ needs.build.outputs.test-tag }} "$tag"
           done <<< "${{ needs.metadata.outputs.tags }}"
       - name: Push Docker image
         run: docker push -a ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # TODO: change this hack when https://github.com/docker/build-push-action/issues/17 will be truly fixed
@@ -251,7 +259,7 @@ jobs:
           openssl req -x509 -config ssl-config/openssl-ca.conf -out ssl/warriorslife.site.fullchain.crt -keyout ssl-config/ca.key -noenc
           openssl req -CA ssl/warriorslife.site.fullchain.crt -CAkey ssl-config/ca.key -config ssl-config/openssl-cert.conf -out ssl/warriorslife.site.crt -keyout ssl/warriorslife.site.key -noenc
       - name: Run nginx -t
-        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/ssl,dst=/ssl,ro ${{ env.IMAGE_NAME }}:test nginx -t
+        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/ssl,dst=/ssl,ro ${{ needs.build.outputs.test-tag }} nginx -t
 
   test-gixy:
     needs: build
@@ -286,5 +294,5 @@ jobs:
         run: docker load --input /tmp/image.tar
       - name: Run Gixy test
         run: |
-          docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx ${{ env.IMAGE_NAME }}:test nginx -v
+          docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx ${{ needs.build.outputs.test-tag }} nginx -v
           docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy:v0.1.22@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b
