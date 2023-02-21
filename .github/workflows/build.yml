@@ -163,7 +163,7 @@ jobs:
           path: /tmp/image.tar
 
   snyk:
-    if: needs.build.outputs.use-snyk == 'true'
+    if: needs.build.outputs.run-snyk == 'true'
     needs: build
     name: Check Docker image for vulnerabilities with Snyk
     runs-on: ubuntu-latest
