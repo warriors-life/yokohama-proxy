@@ -14,7 +14,7 @@ ENV NGINX_DOMAIN_NAME=warriorslife.site
 
 ENV NGINX_USER=nginx
 
-RUN rm -rf /etc/nginx && mkdir /etc/nginx && mkdir /var/nginx \
+RUN rm -rf /etc/nginx && mkdir /etc/nginx \
     && ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG \
     && rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
 
@@ -27,5 +27,5 @@ HEALTHCHECK CMD ["service", "nginx", "status"]
 # TODO: use read-only NGINX? (FEAT)
 # TODO: use unprivileged NGINX? (FEAT)
 
-# TODO: FIPS check (based on nginx-plus-module-fips-check and https://docs.nginx.com/nginx/fips-compliance-nginx-plus/) (FEAT)
+# TODO: FIPS check (based on nginx-plus-module-fips-check and https://docs.nginx.com/nginx/fips-compliance-nginx-plus/) (FEAT, NGINX-MOD)
 # TODO: other NGINX Extras (https://nginx-extras.getpagespeed.com/)? (NGINX-MOD)

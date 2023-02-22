@@ -4,11 +4,11 @@ include compression.conf;
 
 server_tokens off; # TODO: server_tokens none (NGINX-MOD) or server_tokens "" (NGINX Plus)
 
-# TODO: closed API on a subdomain for monitoring (https://docs.nginx.com/nginx/admin-guide/monitoring/live-activity-monitoring/), updating keyzones (https://docs.nginx.com/nginx/admin-guide/security-controls/denylisting-ip-addresses/), upstreams configuration (https://docs.nginx.com/nginx/admin-guide/load-balancer/dynamic-configuration-api/), etc (FEAT, NGINX Plus)
+# TODO: closed API on a subdomain for monitoring (https://docs.nginx.com/nginx/admin-guide/monitoring/live-activity-monitoring/), updating keyzones (https://docs.nginx.com/nginx/admin-guide/security-controls/denylisting-ip-addresses/), upstreams configuration (https://docs.nginx.com/nginx/admin-guide/load-balancer/dynamic-configuration-api/), protected by SSO (https://docs.nginx.com/nginx/deployment-guides/single-sign-on/cognito/), etc (FEAT, NGINX Plus)
 
-# TODO: keepalived (https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived/, https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived-nodes/)? (FEAT, NGINX Plus, SHARESTATE)
+# TODO: keepalived (https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived/, https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived-nodes/, https://docs.nginx.com/nginx/deployment-guides/amazon-web-services/)? (FEAT, NGINX Plus, SHARESTATE)
 
-proxy_cache_path /var/nginx/cache keys_zone=cache:10m inactive=1d max_size=10g;
+proxy_cache_path $NGINX_PROXY_CACHE keys_zone=cache:10m inactive=1d max_size=10g;
 
 resolver $NGINX_RESOLVER; # TODO: test if this is needed (TEST)
 

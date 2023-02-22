@@ -23,4 +23,4 @@ ssl_stapling_verify on;
 # TODO: ssl_early_data? (FEAT)
 # TODO: ssl_verify_client? (FEAT)
 
-# TODO: SSL for streams (STREAM)
+# TODO: SSL for streams (FEAT, STREAM)

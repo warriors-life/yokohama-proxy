@@ -10,7 +10,7 @@ error_log $NGINX_ERROR_LOG info; # TODO: investigate which log level is the best
 
 worker_processes auto;
 
-working_directory $NGINX_DUMPS_PATH;
+working_directory $NGINX_DUMPS;
 worker_rlimit_core 16G;
 
 events {
@@ -22,4 +22,5 @@ http {
 	include $NGINX_ENVSUBST_OUTPUT_DIR/http.conf;
 }
 
-# TODO: add configuration for streams (STREAM)
+# TODO: add configuration for streams (FEAT, STREAM)
+# TODO: add configuration for mail server (FEAT, MAIL)
