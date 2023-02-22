@@ -1,17 +1,3 @@
-limit_except GET POST {
-	deny all; # TODO: Does this actually set error code to 405 and send Allow header? (TEST)
-}
-
-valid_referers server_names;
-# && operator workaround
-if ($invalid_referer) {set $invalid_post 1;}
-if ($request_method = POST) {set $invalid_post 1$invalid_post;} # TODO: Is the "limit_except GET POST" working here or is if running before it? I.e. does a non-GET non-POST request with invalid referrer work? (TEST)
-if ($invalid_post = 11) { # POST request with invalid referrer
-	return 400;
-}
-
-# TODO: Maybe OPTIONS request (FEAT)
-
 proxy_http_version 1.1;
 
 proxy_set_header Upgrade $http_upgrade;
