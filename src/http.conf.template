@@ -1,4 +1,5 @@
 include mime.conf;
+include performance.conf;
 include rate_limiting.conf;
 include compression.conf;
 
@@ -8,7 +9,7 @@ server_tokens off; # TODO: server_tokens none (NGINX-MOD) or server_tokens "" (N
 
 # TODO: keepalived (https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived/, https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived-nodes/, https://docs.nginx.com/nginx/deployment-guides/amazon-web-services/)? (FEAT, NGINX Plus, SHARESTATE)
 
-proxy_cache_path $NGINX_PROXY_CACHE keys_zone=cache:10m inactive=1d max_size=10g;
+proxy_cache_path $NGINX_PROXY_CACHE keys_zone=cache:10m inactive=1d max_size=10g; # TODO: configure (TWEAK)
 
 resolver $NGINX_RESOLVER; # TODO: test if this is needed (TEST)
 
@@ -16,7 +17,7 @@ upstream main_backend {
 	random; # TODO: if keepalived would be used, then a more intelligent algorithm could be used (SHARESTATE)
 	# TODO: zones (SHARESTATE)
 
-	keepalive 8; # TODO: configure (TWEAK)
+	keepalive 32; # TODO: configure (TWEAK)
 
 	server $NGINX_MAIN_BACKEND; # TODO: slow_start=30s (NGINX Plus)
 	# TODO: test if this works with Kubernetes, or if it requires NGINX Plus to resolve (TEST)
@@ -36,7 +37,7 @@ upstream game_backend {
 
 map $status $retry_after {
 	default '';
-	429 5;
+	429 5; # TODO: configure (TWEAK)
 }
 
 # see https://stackoverflow.com/a/69540402 for description of headers in Nginx
@@ -55,27 +56,23 @@ map $upstream_http_cache_control $proxy_no_cache {
 
 # block requests with invalid Host header
 server {
-	listen [::]:80 default_server;
-	listen 80 default_server;
-	return 404;
+	listen [::]:80 ipv6only=off deferred reuseport default_server; # specifying bind options once per address-port specifies them for all other listen directives with same address-port
+	return 444;
 }
 server {
-	listen [::]:443 ssl http2 default_server;
-	listen 443 ssl http2 default_server;
+	listen [::]:443 ipv6only=off deferred reuseport default_server ssl http2;
 	ssl_reject_handshake on;
-	return 404;
+	return 444;
 }
 
 # forward to https and non-www
 server {
 	listen [::]:80;
-	listen 80;
 	server_name $NGINX_DOMAIN_NAME www.$NGINX_DOMAIN_NAME;
 	return 308 https://$NGINX_DOMAIN_NAME$request_uri;
 }
 server {
 	listen [::]:443 ssl http2;
-	listen 443 ssl http2;
 	server_name www.$NGINX_DOMAIN_NAME;
 	include ssl.conf;
 	include hsts.conf;
@@ -85,22 +82,11 @@ server {
 # main
 server {
 	# TODO: find more directives (FEAT)
-	# TODO: client_max_body_size, client_body_buffer_size and others (TWEAK)
-	# TODO: keepalive_timeout (TWEAK)
 
 	listen [::]:443 ssl http2;
-	listen 443 ssl http2;
 	server_name $NGINX_DOMAIN_NAME;
 
 	include ssl.conf;
-
-	tcp_nopush on;
-	tcp_nodelay on;
-
-	sendfile on;
-	sendfile_max_chunk 2m; # TODO: configure and investigate directio aio output_buffers (FEAT and TWEAK)
-
-	# TODO: open_file_cache? (FEAT)
 
 	error_page 400 405 $NGINX_ERROR_BAD_REQUEST;
 	error_page 403 $NGINX_ERROR_FORBIDDEN;
@@ -117,7 +103,10 @@ server {
 		return 404;
 	}
 
-	# TODO: set headers only when needed - for example only on HTML pages (FEAT)
+	# block potentially sensitive files: https://github.com/h5bp/server-configs-nginx/blob/main/h5bp/location/security_file_access.conf, https://feross.org/cmsploit/
+	location ~* (?:\.(?:bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op]))$ {
+		return 404;
+	}
 
 	# static file with hash - remove hash from the path and serve file from build directory
 	location ~ "^((?:/[\w-]+)+)-[0-9a-f]{64}(\.[a-z0-9]+)$" { # hash is 32 byte BLAKE3

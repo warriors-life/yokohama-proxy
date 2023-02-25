@@ -1,4 +1,8 @@
 # TODO: set headers only when needed - for example only on HTML pages (FEAT)
+# Like the following (https://github.com/h5bp/server-configs-nginx/blob/main/nginx.conf):
+# map $sent_http_content_type $coep_policy {
+#   ~*text/(html|javascript)|application/pdf|xml "require-corp";
+# }
 
 include hsts.conf;
 
@@ -23,3 +27,5 @@ add_header Last-Modified ""; # ETag and If-None-Match are better than Last-Modif
 add_header Report-To "{ \"group\": \"endpoint\", \"include_subdomains\": true, \"max_age\": 2592000, \"endpoints\": [ { \"url\": \"$NGINX_REPORT_URL\" } ] }";
 add_header X-Frame-Options "deny";
 add_header X-XSS-Protection "0";
+
+# TODO: CORS headers (Access-Control, etc?) (FEAT)

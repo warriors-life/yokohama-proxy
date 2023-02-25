@@ -10,7 +10,7 @@ gzip_types
 	font/woff2
 	application/wasm;
 
-gzip_comp_level 6; # TODO: configure these three settings (TWEAK)
+gzip_comp_level 5; # TODO: configure these three settings (TWEAK)
 gzip_buffers 16 8k;
 gzip_min_length 1000;
 

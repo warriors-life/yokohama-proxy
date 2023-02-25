@@ -8,6 +8,7 @@ See the [LICENSE](LICENSE) file.
 - [ ] TODOs in configuration files.
 - [ ] Convert configuration to config maps?
 - [ ] Possibly use NGINX Ingress controller instead of NGINX container?
+- [ ] Consider splitting into mulitple NGINX instances (one managing load balancing and rate limiting, others managing more complex stuff)?
 
 ## Documentation
 The NGINX configuration presented in this repository manages SSL, compression (on-the-fly, not static), caching, cookie flags, headers (except for some headers coming from backends), proxying to backends and load balancing, and basic rate limiting.
