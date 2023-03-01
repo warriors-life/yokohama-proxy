@@ -6,10 +6,8 @@ limit_except GET POST {
 }
 
 valid_referers server_names;
-# && operator workaround
-if ($invalid_referer) {set $invalid_post 1;}
-if ($request_method = POST) {set $invalid_post 1$invalid_post;} # TODO: Is the "limit_except GET POST" working here or is if running before it? I.e. does a non-GET non-POST request with invalid referrer work? (TEST)
-if ($invalid_post = 11) { # POST request with invalid referrer
+if ($dynamic_invalid_post) { # POST request with invalid referrer
+                             # TODO: Is the "limit_except GET POST" working here or is if running before it? I.e. does a non-GET non-POST request with invalid referrer work? (TEST)
 	return 400;
 }
 
@@ -21,11 +19,12 @@ proxy_set_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), 
 proxy_set_header Document-Policy "document-write=?0 *;report-to=endpoint"; # TODO: update that when a list of supported policies would be available (DP)
 proxy_set_header Feature-Policy "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; battery 'none'; camera 'none'; display-capture 'none'; document-domain 'none'; encrypted-media 'none'; execution-while-not-rendered 'none'; execution-while-out-of-viewport 'none'; fullscreen 'none'; gamepad 'none'; geolocation 'none'; gyroscope 'none'; layout-animations 'none'; legacy-image-formats 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; navigation-override 'none'; oversized-images 'none'; payment 'none'; picture-in-picture 'none'; publickey-credentials-get 'none'; speaker-selection 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; usb 'none'; vr 'none'; wake-lock 'none'; screen-wake-lock 'none'; web-share 'none'; xr-spatial-tracking 'none'"; # deprecated (DEPR)
 
-proxy_redirect off;
+proxy_redirect / /;
 
 proxy_cache cache;
 proxy_cache_bypass $proxy_no_cache;
 proxy_no_cache $proxy_no_cache;
+proxy_cache_background_update on;
 proxy_cache_revalidate on;
 proxy_cache_valid 200 206 404 1d;
 
@@ -38,6 +37,8 @@ slice 1m;
 proxy_cache_key $uri$is_args$args$slice_range;
 proxy_set_header Range $slice_range;
 
-proxy_cookie_domain ~^$ $host;
+proxy_cookie_domain ~ $host;
 proxy_cookie_flags ~ secure httponly samesite=lax;
-proxy_cookie_path ~^$ /;
+proxy_cookie_path ~ /;
+
+proxy_set_header Early-Data $ssl_early_data;

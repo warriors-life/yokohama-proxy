@@ -1,5 +1,5 @@
 limit_rate_after 500k;
-limit_rate 1m; # TODO: conigure (TWEAK)
+limit_rate 1m; # TODO: configure (TWEAK)
 
 # TODO: this does not work with multiple NGINX instances? (SHARESTATE)
 

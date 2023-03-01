@@ -2,6 +2,11 @@
 # TODO: backlog/somaxconn: https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/#optimizing-the-backlog-queue (FEAT, TWEAK)
 # TODO: investigate other performance articles: https://www.nginx.com/blog/thread-pools-boost-performance-9x/, https://www.nginx.com/blog/tuning-nginx#limit_rate, https://www.nginx.com/blog/avoiding-top-10-nginx-configuration-mistakes/, https://www.nginx.com/blog/performance-tuning-tips-tricks/, https://www.nginx.com/wp-content/uploads/2018/11/NGINX-Conf-2018-slides_Rawdat-tuning.pdf (FEAT, TWEAK)
 
+# TODO: closed API on a subdomain for monitoring (https://docs.nginx.com/nginx/admin-guide/monitoring/live-activity-monitoring/), updating keyzones (https://docs.nginx.com/nginx/admin-guide/security-controls/denylisting-ip-addresses/), upstreams configuration (https://docs.nginx.com/nginx/admin-guide/load-balancer/dynamic-configuration-api/), protected by SSO (https://docs.nginx.com/nginx/deployment-guides/single-sign-on/cognito/), etc (FEAT, NGINX Plus)
+# TODO: keepalived (https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived/, https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived-nodes/, https://docs.nginx.com/nginx/deployment-guides/amazon-web-services/)? (FEAT, NGINX Plus, SHARESTATE)
+
+# TODO: caching for pages that only slightly change (for example main page). Maybe add header and footer on client side, construct them directly in NGINX, use memcached, or something else (FEAT)
+
 user $NGINX_USER;
 pid /run/nginx.pid;
 
@@ -13,10 +18,18 @@ error_log $NGINX_ERROR_LOG info; # TODO: investigate which log level is the best
 
 worker_processes auto; # TODO: configure (TWEAK)
 
-working_directory $NGINX_DUMPS;
-worker_rlimit_core 16G; # TODO: configure (TWEAK)
-
 worker_rlimit_nofile 2048; # TODO: configure (TWEAK)
+
+pcre_jit on;
+
+thread_pool default threads=32 max_queue=65536; # TODO: configure (TWEAK)
+
+timer_resolution 100ms; # TODO: configure (TWEAK)
+
+working_directory $NGINX_DUMPS;
+worker_rlimit_core 16G;
+
+worker_shutdown_timeout 60s;
 
 events {
 	use epoll; # Linux
@@ -24,6 +37,8 @@ events {
 	multi_accept off; # TODO: decide if it should be turned on (TWEAK)
 
 	worker_connections 1024; # TODO: configure (TWEAK)
+
+	worker_aio_requests 32; # TODO: configure (TWEAK)
 }
 
 http {

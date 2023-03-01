@@ -24,6 +24,8 @@ Dockerfile      text
 *.conf          text
 *.conf.template text
 
+*.env           text eol=lf
+
 .gitattributes  export-ignore
 .gitignore      export-ignore
 .gitkeep        export-ignore

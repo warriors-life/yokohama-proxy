@@ -2,22 +2,31 @@ include mime.conf;
 include performance.conf;
 include rate_limiting.conf;
 include compression.conf;
+include ssl.conf;
+
+http2_push_preload on;
+
+lingering_close on;
+lingering_time 30s;
+lingering_timeout 5s; # TODO: configure (TWEAK)
+
+msie_padding off;
 
 server_tokens off; # TODO: server_tokens none (NGINX-MOD) or server_tokens "" (NGINX Plus)
 
-# TODO: closed API on a subdomain for monitoring (https://docs.nginx.com/nginx/admin-guide/monitoring/live-activity-monitoring/), updating keyzones (https://docs.nginx.com/nginx/admin-guide/security-controls/denylisting-ip-addresses/), upstreams configuration (https://docs.nginx.com/nginx/admin-guide/load-balancer/dynamic-configuration-api/), protected by SSO (https://docs.nginx.com/nginx/deployment-guides/single-sign-on/cognito/), etc (FEAT, NGINX Plus)
-
-# TODO: keepalived (https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived/, https://docs.nginx.com/nginx/admin-guide/high-availability/ha-keepalived-nodes/, https://docs.nginx.com/nginx/deployment-guides/amazon-web-services/)? (FEAT, NGINX Plus, SHARESTATE)
-
-proxy_cache_path $NGINX_PROXY_CACHE keys_zone=cache:10m inactive=1d max_size=10g; # TODO: configure (TWEAK)
+proxy_cache_path /tmp/proxy-cache keys_zone=cache:10m inactive=1d max_size=10g; # TODO: configure (TWEAK)
 
 resolver $NGINX_RESOLVER; # TODO: test if this is needed (TEST)
 
 upstream main_backend {
 	random; # TODO: if keepalived would be used, then a more intelligent algorithm could be used (SHARESTATE)
-	# TODO: zones (SHARESTATE)
 
-	keepalive 32; # TODO: configure (TWEAK)
+	zone main 64k;
+
+	keepalive 32;
+	keepalive_requests 1000;
+	keepalive_time 1h;
+	keepalive_timeout 5m; # TODO: configure (TWEAK)
 
 	server $NGINX_MAIN_BACKEND; # TODO: slow_start=30s (NGINX Plus)
 	# TODO: test if this works with Kubernetes, or if it requires NGINX Plus to resolve (TEST)
@@ -27,11 +36,13 @@ upstream main_backend {
 
 upstream chat_backend {
 	random;
+	zone chat 64k;
 	server $NGINX_CHAT_BACKEND;
 }
 
 upstream game_backend {
 	random;
+	zone game 64k;
 	server $NGINX_GAME_BACKEND;
 }
 
@@ -50,6 +61,11 @@ map $http_upgrade $connection_upgrade { # TODO: test this (TEST)
 map $upstream_http_cache_control $proxy_no_cache {
 	default 0;
 	~*no-store 1;
+}
+
+map $invalid_referer:$request_method $dynamic_invalid_post { # && operator in if workaround
+	default 0;
+	1:POST 1;
 }
 
 # TODO: allow subdomains? (FEAT)
@@ -74,7 +90,6 @@ server {
 server {
 	listen [::]:443 ssl http2;
 	server_name www.$NGINX_DOMAIN_NAME;
-	include ssl.conf;
 	include hsts.conf;
 	return 308 https://$NGINX_DOMAIN_NAME$request_uri;
 }
@@ -86,17 +101,20 @@ server {
 	listen [::]:443 ssl http2;
 	server_name $NGINX_DOMAIN_NAME;
 
-	include ssl.conf;
-
 	error_page 400 405 $NGINX_ERROR_BAD_REQUEST;
-	error_page 403 $NGINX_ERROR_FORBIDDEN;
+	error_page 401 403 $NGINX_ERROR_FORBIDDEN;
 	error_page 404 $NGINX_ERROR_NOT_FOUND;
 	error_page 413 414 431 $NGINX_ERROR_TOO_LARGE;
+	error_page 425 =400 $NGINX_ERROR_TOO_EARLY; # TODO: Ideally we shouldn't change error code -- this would be possible when it would be wider supported (DEPR)
 	error_page 429 $NGINX_ERROR_TOO_MANY_REQUESTS;
 	error_page 500 $NGINX_ERROR_INTERNAL;
 	error_page 502 503 504 =503 $NGINX_ERROR_SERVICE_UNAVAILABLE; # TODO: or maintenance (FEAT)
 	# TODO: 415? (FEAT)
 	# TODO: Retry-After for 503? (FEAT)
+
+	auth_basic $NGINX_AUTH_REALM;
+	auth_basic_user_file $NGINX_AUTH_USERS;
+	auth_delay 1s;
 
 	# unmatched by regular expressions - ignore them
 	location / {

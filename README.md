@@ -17,12 +17,13 @@ The configuration uses the following environment variables to control NGINX:
 - `$NGINX_REPORT_URL` - URL (absolute), to which error reports are send (such as from `Report-Endpoints` header).
 - `$NGINX_RESOLVER` - seeds the NGINX [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive.
 - `$NGINX_MAIN_BACKEND`, `$NGINX_CHAT_BACKEND`, and `$NGINX_GAME_BACKEND` - IP addresses or domain names (potentially with ports) of Warriors Life main backend, chat backend, and game backend.
-- `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE` - URLs (relative) of 400 and 405, 403, 404, 413 and 414 and 431, 429, 500, 502 and 503 and 504 error pages.
+- `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `NGINX_ERROR_TOO_EARLY`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE` - URLs (relative) of 400 and 405, 403, 404, 413 and 414 and 431, 425 (returned as 400), 429, 500, 502 and 503 and 504 (returned as 503) error pages.
 - `$NGINX_CHAT_WEBSOCKET_URL` and `$NGINX_GAME_WEBSOCKET_URL` - URLs (relative), on which a client can connect to chat and game backends via WebSockets.
-- `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS` - paths where SSL certificate, SSL certificate key, Diffie-Hellman parameters, and trusted CA certificates are located.
-- `$NGINX_PROXY_CACHE` - directory, where proxy cache is stored by NGINX.
+- `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS` - paths to SSL certificate, SSL certificate key, Diffie-Hellman parameters, and trusted CA certificates file.
 - `$NGINX_DUMPS` - directory, where NGINX places crash dumps.
 - `$NGINX_STATIC` - directory, where static files (gzipped, brotlied, and empty originals) are located.
+- `$NGINX_AUTH_REALM` - authentication realm for HTTP Basic Authentication (enabled on all requests). Set to `off` to disable.
+- `$NGINX_AUTH_USERS` - path to users and passwords file used for authentication.
 
 Following environment variables are set in Dockerfile, but can be changed:
 - `$NGINX_DOMAIN_NAME` - the domain name of the website, defaults to `warriorslife.site`.

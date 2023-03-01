@@ -1,10 +1,10 @@
 # TODO: configure
-# client_max_body_size, client_body_buffer_size, client_max_body_size, large_client_header_buffers
-# client_body_timeout, client_header_timeout, keepalive_timeout, send_timeout (https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration#worker-processes-and-worker-connections, https://gist.github.com/v0lkan/90fcb83c86918732b894)
-# types_hash_max_size, server_names_hash_max_size, server_names_hash_bucket_size
-# keepalive_requests (FEAT, TWEAK)
-
-reset_timedout_connection on; # TODO: test if this works (TEST)
+# client_max_body_size, client_body_buffer_size, client_header_buffer_size, large_client_header_buffers
+# client_body_timeout, client_header_timeout, send_timeout (https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration#buffers, https://gist.github.com/v0lkan/90fcb83c86918732b894)
+# ssl_buffer_size
+# http2_body_preread_size, http2_chunk_size, http2_max_concurrent_pushes, http2_max_concurrent_streams, http2_recv_buffer_size
+# proxy_buffer_size, proxy_buffering, proxy_buffers, proxy_busy_buffers_size, proxy_max_temp_file_size, proxy_request_buffering, 	proxy_temp_file_write_size
+# map_hash_bucket_size, map_hash_max_size, proxy_headers_hash_bucket_size, proxy_headers_hash_max_size, referer_hash_bucket_size, referer_hash_max_size, server_names_hash_bucket_size, server_names_hash_max_size, types_hash_bucket_size, types_hash_max_size, variables_hash_bucket_size, variables_hash_max_size (https://nginx.org/en/docs/hash.html) (FEAT, TWEAK)
 
 tcp_nopush on;
 tcp_nodelay on;
@@ -12,7 +12,7 @@ tcp_nodelay on;
 # TODO: which of these directives work with enabled things like gzip? (TEST)
 sendfile on;
 sendfile_max_chunk 2m;
-aio threads;
+aio threads=default;
 aio_write on;
 directio 8m;
 output_buffers 2 32k; # TODO: configure all these values (TWEAK)
@@ -20,3 +20,16 @@ output_buffers 2 32k; # TODO: configure all these values (TWEAK)
 open_file_cache max=1000 inactive=1d;
 open_file_cache_errors on;
 open_file_cache_valid 60s; # TODO: configure (TWEAK)
+
+keepalive_disable none;
+keepalive_requests 1000;
+keepalive_time 1h;
+keepalive_timeout 75s; # TODO: configure (TWEAK)
+
+reset_timedout_connection on; # TODO: test if this works (TEST)
+
+postpone_output 1448; # should be less or equal than Maximum Segment Size, TODO: configure (TWEAK)
+
+read_ahead 1; # should be greater than zero
+
+resolver_timeout 10s;
