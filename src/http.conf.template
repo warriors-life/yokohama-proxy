@@ -96,8 +96,6 @@ server {
 
 # main
 server {
-	# TODO: find more directives (FEAT)
-
 	listen [::]:443 ssl http2;
 	server_name $NGINX_DOMAIN_NAME;
 
