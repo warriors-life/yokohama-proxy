@@ -48,7 +48,7 @@ upstream game_backend {
 
 map $status $retry_after {
 	default '';
-	429 5; # TODO: configure (TWEAK)
+	429 5;
 }
 
 # see https://stackoverflow.com/a/69540402 for description of headers in Nginx
@@ -101,7 +101,7 @@ server {
 
 	error_page 400 405 $NGINX_ERROR_BAD_REQUEST;
 	error_page 401 403 $NGINX_ERROR_FORBIDDEN;
-	error_page 404 $NGINX_ERROR_NOT_FOUND;
+	error_page 404 416 $NGINX_ERROR_NOT_FOUND;
 	error_page 413 414 431 $NGINX_ERROR_TOO_LARGE;
 	error_page 425 =400 $NGINX_ERROR_TOO_EARLY; # TODO: Ideally we shouldn't change error code -- this would be possible when it would be wider supported (DEPR)
 	error_page 429 $NGINX_ERROR_TOO_MANY_REQUESTS;
