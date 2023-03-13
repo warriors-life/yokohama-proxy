@@ -139,7 +139,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f03ac48505955848960e80bbb68046aa35c7b9e7
+        uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c
         with:
           version: https://github.com/docker/buildx.git#ed00243a0ce2a0aee75311b06e32d33b44729689
       - name: Set outputs
