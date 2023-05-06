@@ -10,7 +10,7 @@ add_header Retry-After $retry_after always;
 
 add_header Report-Endpoints "endpoint=\"$NGINX_REPORT_URL\", default=\"$NGINX_REPORT_URL\""; # reporting api (https://web.dev/reporting-api/ and https://web.dev/reporting-api-migration/)
 
-add_header NEL "{ \"report_to\": \"endpoint\", \"include_subdomains\": true, , \"max_age\": 2592000 }";
+add_header NEL "{ \"report_to\": \"endpoint\", \"include_subdomains\": true, \"max_age\": 2592000 }";
 
 add_header X-Content-Type-Options "nosniff";
 add_header X-Permitted-Cross-Domain-Policies "none";

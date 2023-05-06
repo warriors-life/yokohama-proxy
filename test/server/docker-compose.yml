@@ -1,0 +1,25 @@
+services:
+  proxy:
+    image: $TEST_IMAGE
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: ../test.env
+    volumes:
+      - ./ssl:/ssl:ro
+      - ./static:/static:ro
+    tmpfs: /dumps
+
+  backend:
+    image: node
+    user: node
+    working_dir: /home/node/app
+    environment:
+      - BACKEND_PORT=8191
+      - WEBSOCKET_PORT=8192
+    volumes:
+      - ../:/home/node/app:ro
+    expose:
+      - 8191
+      - 8192
+    command: npm run start-backend

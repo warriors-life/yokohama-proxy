@@ -26,6 +26,22 @@ Dockerfile      text
 
 *.env           text eol=lf
 
+*.js            text
+
+*.html          text diff=html
+*.css           text diff=css
+*.txt           text
+*.csv           text eol=crlf
+*.json          text
+*.webmanifest   text
+*.svg           -text
+*.webp          -text
+*.png           -text
+*.ico           -text
+*.webm          -text
+*.woff2         -text
+*.wasm          -text
+
 .gitattributes  export-ignore
 .gitignore      export-ignore
 .gitkeep        export-ignore
