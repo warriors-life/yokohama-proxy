@@ -3,7 +3,7 @@ import WebSocket from 'ws';
 import * as fs from 'fs/promises'; // TODO: why "node:fs/promises" doesn't work? (TEST)
 
 function sleep() {
-	return new Promise(resolve => setTimeout(resolve, 250));
+	return new Promise(resolve => setTimeout(resolve, 300));
 }
 
 const caCertificate = await fs.readFile('server' + process.env.NGINX_TRUSTED_CERTS);

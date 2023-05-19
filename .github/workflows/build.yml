@@ -342,6 +342,7 @@ jobs:
           export $(xargs < test.env) && cat test.env >> $GITHUB_ENV
           openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
           openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
+          gzip -k server/static/*.{css,csv,html,ico,js,json,svg,txt,wasm,webmanifest}
           cd server && docker-compose up -d
         env:
           TEST_IMAGE: ${{ needs.build.outputs.test-tag }}
