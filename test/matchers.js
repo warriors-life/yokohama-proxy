@@ -21,11 +21,11 @@ function toHaveStatus(res, statusCode) {
 }
 
 function toBeFound(res) {
-	return toHaveStatus(res, 200);
+	return toHaveStatus.call(this, res, 200);
 }
 
 function toBeNotFound(res) {
-	return toHaveStatus(res, 404);
+	return toHaveStatus.call(this, res, 404);
 }
 
 function toBuffer(obj) {
