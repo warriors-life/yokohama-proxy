@@ -318,6 +318,7 @@ jobs:
             registry.npmjs.org:443
             objects.githubusercontent.com:443
             registry-1.docker.io:443
+            auth.docker.io:443
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
         with:
