@@ -47,8 +47,8 @@ jobs:
           dockerfile: src/Dockerfile
           failure-threshold: style
 
-  scorecard: # TODO: doesn't work with pushs on non-default branches
-    if: "!contains(github.repository, '.warriors-life-template')"
+  scorecard:
+    if: "!contains(github.repository, '.warriors-life-template') && (github.event_name == 'pull_request' || github.ref == 'refs/heads/dev')"
     name: Check supply chain with Scorecard
     runs-on: ubuntu-latest
     permissions:
@@ -259,7 +259,7 @@ jobs:
           openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
           openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
       - name: Run nginx -t
-        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/ssl,dst=/ssl,ro ${{ needs.build.outputs.test-tag }} nginx -t
+        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/server/ssl,dst=/ssl,ro ${{ needs.build.outputs.test-tag }} nginx -t
 
   test-gixy:
     needs: build
@@ -314,6 +314,8 @@ jobs:
           egress-policy: block
           allowed-endpoints: >
             github.com:443
+            api.github.com:443
+            registry.npmjs.org:443
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
         with:
