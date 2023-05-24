@@ -183,7 +183,7 @@ jobs:
       - name: Load image
         run: docker load --input /tmp/image.tar
       - name: Run Snyk to check Docker image for vulnerabilities
-        uses: snyk/actions/docker@7fad562681122205233d1242c3bb39598c5393da
+        uses: snyk/actions/docker@b98d498629f1c368650224d6d212bf7dfa89e4bf
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
