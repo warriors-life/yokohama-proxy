@@ -40,11 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    defaults:
-      run:
-        working-directory: test
     steps:
-      - name: Test
+      - name: Test with nginx -t
         uses: warriors-life/.warriors-life-workflows/test-docker-image@dev
         with:
           code: |
@@ -59,11 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    defaults:
-      run:
-        working-directory: test
     steps:
-      - name: Test
+      - name: Test with Gixy
         uses: warriors-life/.warriors-life-workflows/test-docker-image@dev
         with:
           code: |
