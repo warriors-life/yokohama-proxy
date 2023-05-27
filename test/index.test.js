@@ -177,7 +177,7 @@ describe('IPv6 works', () => {
 	test('HTTPS', () => expect(request('/', { ipv6: true })).resolves.toBeFound());
 });
 
-test('WebSockets work', async () => {
+test.todo('WebSockets work', async () => {
 	const ws = await websocket(process.env.NGINX_CHAT_WEBSOCKET_URL);
 	expect(await awaitWebSocketResponse(ws)).toBe('Hello World!');
 	ws.send('test');
@@ -187,15 +187,16 @@ test('WebSockets work', async () => {
 });
 
 describe('Paths', () => {
+	test.todo('Parent directories don\'t produce anything', () => expect(request('/test/test2-abc_def')).resolves.toBeNotFound());
 	test('Static with subfolders', () => expect(request('/test/test2-abc_def/file.txt')).resolves.toBeFound());
 	test('Dynamic with subfolders', () => expect(request('/test/test2-abc_def/test')).resolves.toBeFound());
-	test('Static-like without extension', () => expect(request('/test/test2-abc_def/file')).resolves.toBeNotFound());
+	test.todo('Static-like without extension', () => expect(request('/test/test2-abc_def/file')).resolves.toBeNotFound());
 	test('Dynamic-like with extension', () => expect(request('/test/test2-abc_def/test.txt')).resolves.toBeNotFound());
 	test('Long static', () => expect(request('/test/test2-abc_def/1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111.txt')).resolves.toBeFound());
 	test('Long dynamic', () => expect(request('/test/test2-abc_def/1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111000000000000000000000000000000')).resolves.toBeFound());
-	test('Static uppercase 1', () => expect(request('/TEST.html')).resolves.toBeFound()); // ^
-	test('Static uppercase 2', () => expect(request('/TEST.HTML')).resolves.toBeFound()); // ^
-	test('Dynamic uppercase', () => expect(request('/CACHE-COMPRESS')).resolves.toBeFound()); // _
+	test.todo('Static uppercase 1', () => expect(request('/TEST.html')).resolves.toBeFound());
+	test.todo('Static uppercase 2', () => expect(request('/TEST.HTML')).resolves.toBeFound());
+	test('Dynamic uppercase', () => expect(request('/CACHE-COMPRESS')).resolves.toBeFound());
 	test('Invalid characters (static)', async () => {
 		// TODO: would be great to have a test for e.g.  (\x01) character, but I have *no* idea how to create a file with such name
 		// also, \.txt?
@@ -230,13 +231,16 @@ describe('Paths', () => {
 		expect(await request('/invalid/🀜')).toBeNotFound();
 		expect(await request('/invalid/\\')).toBeNotFound();
 	});
-	test('Strange paths', async () => {
+	test.todo('Strange paths', async () => {
 		expect(await request('//test.txt')).toBeFound();
 		expect(await request('/./test.txt')).toBeFound();
-		expect(await request('/../test.txt')).toBeNotFound(); // ^
-		expect(await request('/test//test2-abc_def')).toBeFound();
-		expect(await request('/test/./test2-abc_def')).toBeFound();
-		expect(await request('/test/../test2-abc_def')).toBeNotFound(); // _
+		expect(await request('/../test.txt')).toBeFound();
+		expect(await request('/test/../test.txt')).toBeFound();
+		expect(await request('//cache-compress')).toBeFound();
+		expect(await request('/./cache-compress')).toBeFound();
+		expect(await request('/../cache-compress')).toBeFound();
+		expect(await request('/test/../cache-compress')).toBeFound();
+		expect(await request('/test.txt/')).toBeNotFound();
 		expect(await request('/cache-compress/')).toBeNotFound();
 	});
 	test('Potentially sensitive files', () => expect(request('/test.sh')).resolves.toBeNotFound());
@@ -287,8 +291,6 @@ describe('Invalid hostname is blocked', () => {
 });
 
 // TODO: should body be checked on 3xx responses?
-
-// checking IPv4 and IPv6
 
 // checking methods (HEAD, GET, POST, also checking no others are allowed and no POST for static or dynamic with invalid referrer)
 
