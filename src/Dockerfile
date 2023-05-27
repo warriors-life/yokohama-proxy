@@ -12,8 +12,6 @@ ENV NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=true
 ENV NGINX_ACCESS_LOG=/var/log/nginx/access.log
 ENV NGINX_ERROR_LOG=/var/log/nginx/error.log
 
-ENV NGINX_DOMAIN_NAME=warriorslife.site
-
 ENV NGINX_USER=nginx
 
 RUN rm -rf /etc/nginx && mkdir /etc/nginx \

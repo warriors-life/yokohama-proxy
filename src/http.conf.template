@@ -8,7 +8,7 @@ http2_push_preload on;
 
 lingering_close on;
 lingering_time 30s;
-lingering_timeout 5s; # TODO: configure (TWEAK)
+lingering_timeout 5s;
 
 msie_padding off;
 
@@ -99,6 +99,7 @@ server {
 	listen [::]:443 ssl http2;
 	server_name $NGINX_DOMAIN_NAME;
 
+	# TODO: Maybe these pages should be inaccesible to the user?
 	error_page 400 405 $NGINX_ERROR_BAD_REQUEST;
 	error_page 401 403 $NGINX_ERROR_FORBIDDEN;
 	error_page 404 416 $NGINX_ERROR_NOT_FOUND;
@@ -152,11 +153,13 @@ server {
 	}
 
 	# dynamic file - forward to the JS server
-	location ~ ^((?:/[0-9a-zA-Z\-_]+)+|/)$ {
+	location ~ ^((?:/[\w-]+)+|/)$ {
 		include dynamic.conf;
 		proxy_pass http://main_backend;
 
 		etag off; # backend can use ETag and If-None-Match on its own
 		proxy_set_header Cache-Control "no-store";
 	}
+
+	# TODO: does "public" in Cache-Control interact with proxies? Maybe we should do "public, no-cache" and "public, immutable" when auth is off and "private, no-cache" and "private, immutable" when on? (FEAT)
 }

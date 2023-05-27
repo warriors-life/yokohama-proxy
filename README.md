@@ -14,6 +14,7 @@ See the [LICENSE](LICENSE) file.
 The NGINX configuration presented in this repository manages SSL, compression (on-the-fly, not static), caching, cookie flags, headers (except for some headers coming from backends), proxying to backends and load balancing, and basic rate limiting.
 
 The configuration uses the following environment variables for controlling it:
+- `$NGINX_DOMAIN_NAME` - the domain name of the website.
 - `$NGINX_REPORT_URL` - URL (absolute), to which error reports are send (such as from `Report-Endpoints` header).
 - `$NGINX_RESOLVER` - seeds the NGINX [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive.
 - `$NGINX_MAIN_BACKEND`, `$NGINX_CHAT_BACKEND`, and `$NGINX_GAME_BACKEND` - IP addresses or domain names (potentially with ports) of Warriors Life main backend, chat backend, and game backend.
@@ -26,14 +27,13 @@ The configuration uses the following environment variables for controlling it:
 - `$NGINX_AUTH_USERS` - path to users and passwords file used for authentication.
 
 Following environment variables are set in Dockerfile, but can be changed:
-- `$NGINX_DOMAIN_NAME` - the domain name of the website, defaults to `warriorslife.site`.
 - `$NGINX_USER` - the user that NGINX uses, defaults to `nginx`.
 - `$NGINX_ACCESS_LOG` and `$NGINX_ERROR_LOG` - files where NGINX logs requests and errors, default to `/var/log/nginx/access.log` and `/var/log/nginx/error.log`, which are symbolic links to `stdout` and `stderr`.
 - `$NGINX_ENVSUBST_TEMPLATE_DIR` - directories, where template NGINX configs are placed (final configs are placed in `/etc/nginx`), defaults to `/nginx-configs-templates`.
 
 The following is expected from the backends:
 - Correctly respond to GET, HEAD, and POST requests to dynamic resources (`$NGINX_MAIN_BACKEND`) and WebSocket requests to WebSocket resources (`$NGINX_CHAT_BACKEND` and `$NGINX_GAME_BACKEND`).
-- Correctly manage TLS Early Data by preventing request resubmission (processing the`Early-Data` header passed).
+- Correctly manage TLS Early Data by preventing request resubmission (processing the `Early-Data` header passed).
 - Correctly process `Origin` and `Referer` headers (preventing requests that shouldn't come from external sites).
 - Correctly manage application-level rate-limiting.
 - Correctly manage `ETag` and `If-None-Match` headers for cacheable resources. Cacheable resources should also return correct `Cache-Control` header (uncacheable should return the `Cache-Control` header passed).

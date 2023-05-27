@@ -18,7 +18,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  NODE_ENV: ${{ (github.ref == 'ref/heads/release' || github.base_ref == 'ref/heads/release') && 'release' || 'dev' }}
+  NODE_ENV: ${{ (github.ref == 'ref/heads/release' || github.base_ref == 'ref/heads/release') && 'production' || 'development' }}
 
 permissions: {}
 
@@ -48,7 +48,7 @@ jobs:
           failure-threshold: style
 
   scorecard:
-    if: "!contains(github.repository, '.warriors-life-template')"
+    if: "!contains(github.repository, '.warriors-life-template') && (github.event_name == 'pull_request' || github.ref == 'refs/heads/dev')"
     name: Check supply chain with Scorecard
     runs-on: ubuntu-latest
     permissions:
@@ -71,18 +71,17 @@ jobs:
         uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
         with:
           persist-credentials: false
-      # TODO: disabled until GraphQL will start to support fine-grained tokens
-      # - name: Run analysis
-        # uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d
-        # with:
-          # results_file: results.sarif
-          # results_format: sarif
-          # repo_token: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Upload output
-        # uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
-        # with:
-          # name: Scorecard output
-          # path: results.sarif
+      - name: Run analysis
+        uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload output
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+        with:
+          name: Scorecard output
+          path: results.sarif
 
   metadata:
     if: "!contains(github.repository, '.warriors-life-template')"
@@ -191,7 +190,7 @@ jobs:
 
   push:
     if: github.event_name != 'pull_request'
-    needs: [hadolint, scorecard, snyk, metadata, build, test-nginx, test-gixy]
+    needs: [hadolint, scorecard, snyk, metadata, build, test-nginx, test-gixy, test-unit]
     name: Push Docker image to the Container registry (GitHub Packages)
     runs-on: ubuntu-latest
     permissions:
@@ -256,10 +255,11 @@ jobs:
         run: docker load --input /tmp/image.tar
       - name: Generate SSL certificates
         run: |
-          openssl req -x509 -config ssl-config/openssl-ca.conf -out ssl/warriorslife.site.fullchain.crt -keyout ssl-config/ca.key -noenc
-          openssl req -CA ssl/warriorslife.site.fullchain.crt -CAkey ssl-config/ca.key -config ssl-config/openssl-cert.conf -out ssl/warriorslife.site.crt -keyout ssl/warriorslife.site.key -noenc
+          export $(xargs < test.env)
+          openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
+          openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
       - name: Run nginx -t
-        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/ssl,dst=/ssl,ro ${{ needs.build.outputs.test-tag }} nginx -t
+        run: docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/server/ssl,dst=/ssl,ro ${{ needs.build.outputs.test-tag }} nginx -t
 
   test-gixy:
     needs: build
@@ -296,3 +296,55 @@ jobs:
         run: |
           docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx ${{ needs.build.outputs.test-tag }} nginx -v
           docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy:v0.1.22@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b
+
+  test-unit:
+    needs: build
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: test
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@1f99358870fe1c846a3ccba386cc2b2246836776
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            api.github.com:443
+            registry.npmjs.org:443
+            objects.githubusercontent.com:443
+            registry-1.docker.io:443
+            auth.docker.io:443
+            production.cloudflare.docker.com:443
+      - name: Checkout
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version: 18.16.0
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Download Docker image
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+        with:
+          name: Docker image
+          path: /tmp
+      - name: Load image
+        run: docker load --input /tmp/image.tar
+      - name: Start proxy and backend
+        run: |
+          export $(xargs < test.env) && cat test.env >> $GITHUB_ENV
+          openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
+          openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
+          gzip -k server/static/*.{css,csv,html,ico,js,json,svg,txt,wasm,webmanifest}
+          cd server && docker-compose up -d
+        env:
+          TEST_IMAGE: ${{ needs.build.outputs.test-tag }}
+      - name: Run unit tests
+        run: npm test

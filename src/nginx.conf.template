@@ -10,7 +10,7 @@
 user $NGINX_USER;
 pid /run/nginx.pid;
 
-error_log $NGINX_ERROR_LOG info; # TODO: investigate which log level is the best (TWEAK)
+error_log $NGINX_ERROR_LOG notice; # TODO: investigate which log level is the best (TWEAK)
 
 # TODO: load_module modules/ngx_fips_check_module.so; (NGINX-MOD)
 
