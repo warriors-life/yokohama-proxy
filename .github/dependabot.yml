@@ -1,5 +1,10 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/test"
+    schedule:
+      interval: "daily"
+
   - package-ecosystem: "docker"
     directory: "/src"
     schedule:

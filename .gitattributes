@@ -27,12 +27,12 @@ Dockerfile      text
 *.env           text eol=lf
 
 *.js            text
+*.json          text
 
 *.html          text diff=html
 *.css           text diff=css
 *.txt           text
 *.csv           text eol=crlf
-*.json          text
 *.webmanifest   text
 *.svg           -text
 *.webp          -text

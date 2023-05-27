@@ -12,6 +12,7 @@
   },
   "author": "Warriors Life",
   "license": "SEE LICENSE IN ../LICENSE",
+  "private": "true",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "express": "^4.18.2",
