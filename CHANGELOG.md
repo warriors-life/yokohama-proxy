@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.1] - 2023-05-28
+
 ### Added
 - Created this repository, moved NGINX configs here.
 - Added nginx -t and Gixy tests.
 - Added some unit tests.
 
-[Unreleased]: https://github.com/warriors-life/warriors-life-nginx-proxy/commits/dev
+[Unreleased]: https://github.com/warriors-life/warriors-life-nginx-proxy/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/warriors-life/warriors-life-nginx-proxy/releases/tag/v0.0.1
