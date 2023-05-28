@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - 'dependabot/**'
     tags:
-      - *
+      - '*'
   pull_request:
     branches:
       - 'release/?*'
