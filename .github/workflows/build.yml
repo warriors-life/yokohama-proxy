@@ -31,8 +31,8 @@ jobs:
     permissions:
       security-events: write
       packages: write
+      contents: write
       actions: read
-      contents: read
       issues: read
       pull-requests: read
 
