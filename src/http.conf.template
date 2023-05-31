@@ -12,7 +12,7 @@ lingering_timeout 5s;
 
 msie_padding off;
 
-server_tokens off; # TODO: server_tokens none (NGINX-MOD) or server_tokens "" (NGINX Plus)
+server_tokens off;
 
 proxy_cache_path /tmp/proxy-cache keys_zone=cache:10m inactive=1d max_size=10g; # TODO: configure (TWEAK)
 
