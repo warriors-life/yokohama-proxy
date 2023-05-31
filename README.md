@@ -57,8 +57,9 @@ The following is expected from the configuration done by environment variables:
 - Provide correct .htpasswd file at `$NGINX_AUTH_USERS` if `NGINX_AUTH_REALM` is not `off`.
 - Make sure all needed files and directories are readable and/or writable. <!--- # TODO: List them (FEAT) -->
 
-The proxy guranteed to do:
-- Work for Chrome 41+, Edge 18+, Safari 14+, Firefox 65+, Opera 28+.
+The proxy is guranteed to:
+- Work on Linux 4.5+ servers (for example, Debian 9+, Ubuntu 16.10+, RHEL 8+, or Fedora 24+).
+- Work for clients running Chrome 32+, Edge 18+, Safari 14+, Firefox 65+, Opera 20+, Samsung Internet 5+ browsers on Windows 7+, Android 4.4.2+, macOS 11+, and generally all Linuxes with OpenSSL 1.0.1+ installed.
 - Manage GET requests for static files (optionally with BLAKE3 hash appended to name), WebSocket requests for WebSocket URLs (`$NGINX_CHAT_WEBSOCKET_URL` and `$NGINX_GAME_WEBSOCKET_URL`), GET and POST requests for dynamic resources.
 - Manage SSL.
 - Manage on-the-fly GZIP compression and serving pre-gzipped files.
