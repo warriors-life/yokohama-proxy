@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A TODO about redirecting unsupported browsers to a special page.
+
+### Changed
+- Clarify in README versions where proxy runs.
+
+### Removed
+- A TODO about removing "Server: nginx" header entirely.
+
 ## [0.0.1] - 2023-05-28
 
 ### Added

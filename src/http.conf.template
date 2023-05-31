@@ -115,6 +115,8 @@ server {
 	auth_basic_user_file $NGINX_AUTH_USERS;
 	auth_delay 1s;
 
+	# TODO: redirect unsupported browsers to a special page (related: https://trac.nginx.org/nginx/ticket/1958) (FEAT)
+
 	# unmatched by regular expressions - ignore them
 	location / {
 		return 404;
