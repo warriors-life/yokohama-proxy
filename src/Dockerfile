@@ -13,15 +13,16 @@ ENV NGINX_ERROR_LOG=/var/log/nginx/error.log
 
 ENV NGINX_USER=nginx
 
-RUN rm -rf /etc/nginx && mkdir /etc/nginx \ # Clear /etc/nginx directory
+	# Clear /etc/nginx directory
+RUN rm -rf /etc/nginx && mkdir /etc/nginx && \
 	# Link logs to stdout and stderr
-	&& ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG \
+	ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG && \
 	# Remove unneeded sntrypoint scripts
-	&& rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && rm -f /docker-entrypoint.d/20-envsubst-on-templates.sh \
+	rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && rm -f /docker-entrypoint.d/20-envsubst-on-templates.sh && \
 	# Remove unneeded packages
-	&& apk del --no-network libintl tzdata && rm -f /usr/local/bin/envsubst \
+	apk del --no-network libintl tzdata && rm -f /usr/local/bin/envsubst && \
 	# Build njk
-	&& apkArch="$(cat /etc/apk/arch)" && tempDir="$(mktemp -d)" && chown nobody:nobody $tempDir && apk add --no-cache --virtual .build-deps gcc make cmake libc-dev git && su nobody -s /bin/sh -c "export HOME=${tempDir} && cd ${tempDir} && git clone --recursive --depth 1 --branch v0.1.0 https://github.com/saghul/njk && cd njk && make" && apk del --no-network .build-deps && mv $tempDir/njk/build/njk-linux-$apkArch /usr/local/bin/njk && rm -rf $tempDir
+	apkArch="$(cat /etc/apk/arch)" && tempDir="$(mktemp -d)" && chown nobody:nobody $tempDir && apk add --no-cache --virtual .build-deps gcc make cmake libc-dev git && su nobody -s /bin/sh -c "export HOME=${tempDir} && cd ${tempDir} && git clone --recursive --depth 1 --branch v0.1.0 https://github.com/saghul/njk && cd njk && make" && apk del --no-network .build-deps && mv $tempDir/njk/build/njk-linux-$apkArch /usr/local/bin/njk && rm -rf $tempDir
 
 COPY --link 20-njk-on-templates.sh /docker-entrypoint.d/
 
