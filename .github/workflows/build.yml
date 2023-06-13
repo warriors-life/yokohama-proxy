@@ -37,6 +37,7 @@ jobs:
       pull-requests: read
 
   test-nginx:
+    if: always()
     needs: call-workflow
     name: Test Nginx configuration
     runs-on: ubuntu-latest
@@ -53,6 +54,7 @@ jobs:
             docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/server/ssl,dst=/ssl,ro ${{ needs.call-workflow.outputs.test-tag }} nginx -t
 
   test-gixy:
+    if: always()
     needs: call-workflow
     name: Test Nginx configuration with Gixy
     runs-on: ubuntu-latest
