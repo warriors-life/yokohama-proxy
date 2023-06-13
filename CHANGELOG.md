@@ -7,21 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- A TODO about redirecting unsupported browsers to a special page.
+- A TODO about redirecting unsupported browsers to a special page ([`ec9450`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/ec9450d16986088c757e3f6a746102eaea79beba)).
 
 ### Changed
-- Clarify in README versions where proxy runs.
-- Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk).
+- Clarify in README versions where proxy runs ([`3ba53b`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/3ba53b7edcfbe82ff7e5d8fca0acb2fec21f755e)).
+- Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk) (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/41).
 
 ### Removed
-- A TODO about removing "Server: nginx" header entirely.
+- A TODO about removing "Server: nginx" header entirely ([`01dc10`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/01dc10f6fc2bfe89fc00eca5da017fce4cdfe1b6)).
 
 ## [0.0.1] - 2023-05-28
 
 ### Added
-- Created this repository, moved NGINX configs here.
-- Added nginx -t and Gixy tests.
-- Added some unit tests.
+- Created this repository, moved NGINX configs here ([`360ebd`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/360ebdd3eb60d956dcb8954ce73e64c4498e8fd8)).
+- Added `nginx -t` and Gixy tests ([`dccd9c`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/dccd9ca53d6ed98cb2c9ee99e3be2893e655d814)).
+- Added some unit tests (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/38).
 
 [Unreleased]: https://github.com/warriors-life/warriors-life-nginx-proxy/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/warriors-life/warriors-life-nginx-proxy/releases/tag/v0.0.1
