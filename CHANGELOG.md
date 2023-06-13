@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Clarify in README versions where proxy runs.
+- Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk).
 
 ### Removed
 - A TODO about removing "Server: nginx" header entirely.
