@@ -29,7 +29,7 @@ The configuration uses the following environment variables for controlling it:
 Following environment variables are set in Dockerfile, but can be changed:
 - `$NGINX_USER` - the user that NGINX uses, defaults to `nginx`.
 - `$NGINX_ACCESS_LOG` and `$NGINX_ERROR_LOG` - files where NGINX logs requests and errors, default to `/var/log/nginx/access.log` and `/var/log/nginx/error.log`, which are symbolic links to `stdout` and `stderr`.
-- `$NGINX_ENVSUBST_TEMPLATE_DIR` - directories, where template NGINX configs are placed (final configs are placed in `/etc/nginx`), defaults to `/nginx-configs-templates`.
+- `$NGINX_NJK_TEMPLATE_DIR` - directories, where template NGINX configs are placed (final configs are placed in `/etc/nginx`), defaults to `/nginx-configs-templates`.
 
 The following is expected from the backends:
 - Correctly respond to GET, HEAD, and POST requests to dynamic resources (`$NGINX_MAIN_BACKEND`) and WebSocket requests to WebSocket resources (`$NGINX_CHAT_BACKEND` and `$NGINX_GAME_BACKEND`).
