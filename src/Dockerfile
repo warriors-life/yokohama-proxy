@@ -22,7 +22,7 @@ RUN rm -rf /etc/nginx && mkdir /etc/nginx && \
 	# Remove unneeded packages
 	apk del --no-network libintl tzdata && rm -f /usr/local/bin/envsubst && \
 	# Build njk
-	apkArch="$(cat /etc/apk/arch)" && tempDir="$(mktemp -d)" && chown nobody:nobody "$tempDir" && apk add --no-cache --virtual .build-deps gcc=13.1.1_git20230603-r0 make=4.4.1-r1 cmake=3.26.4-r1 libc-dev=0.7.2-r5 git=2.41.0-r0 && su nobody -s /bin/sh -c 'export HOME="$tempDir" && cd "$tempDir" && git clone --recursive --depth 1 --branch v0.1.0 https://github.com/saghul/njk && cd njk && make' && apk del --no-network .build-deps && mv "$tempDir/njk/build/njk-linux-$apkArch" /usr/local/bin/njk && rm -rf "$tempDir"
+	apkArch="$(cat /etc/apk/arch)" && tempDir="$(mktemp -d)" && chown nobody:nobody "$tempDir" && apk add --no-cache --virtual .build-deps gcc=13.1.1_git20230603-r0 make=4.4.1-r1 cmake=3.26.4-r1 libc-dev=0.7.2-r5 git=2.41.0-r0 && su nobody -s /bin/sh -c "export HOME=\"$tempDir\" && cd \"$tempDir\" && git clone --recursive --depth 1 --branch v0.1.0 https://github.com/saghul/njk && cd njk && make" && apk del --no-network .build-deps && mv "$tempDir/njk/build/njk-linux-$apkArch" /usr/local/bin/njk && rm -rf "$tempDir"
 
 COPY --link 20-njk-on-templates.sh /docker-entrypoint.d/
 
