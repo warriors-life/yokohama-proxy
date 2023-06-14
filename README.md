@@ -17,7 +17,7 @@ The configuration uses the following environment variables for controlling it:
 - `$NGINX_DOMAIN_NAME` - the domain name of the website.
 - `$NGINX_REPORT_URL` - URL (absolute), to which error reports are send (such as from `Report-Endpoints` header).
 - `$NGINX_RESOLVER` - seeds the NGINX [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive.
-- `$NGINX_MAIN_BACKEND` - IP address or domain name (potentially with port) of Warriors Life main backend.
+- `$NGINX_BACKEND` - IP address or domain name (potentially with port) of Warriors Life main backend.
 - `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `NGINX_ERROR_TOO_EARLY`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE` - URLs (relative) of 400 and 405, 403, 404 and 416, 413 and 414 and 431, 425 (returned as 400), 429, 500, 502 and 503 and 504 (returned as 503) error pages.
 - `$NGINX_WEBSOCKETS` - a JSON object specifying an array of arrays containing three elements, which are a WebSocket resource name, the regexp for URL (relative) where it can be accessed, and its backend (IP address or domain name, potentially with port).
 - `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS` - paths to SSL certificate, SSL certificate key, Diffie-Hellman parameters, and trusted CA certificates file.
@@ -33,7 +33,7 @@ Following environment variables are set in Dockerfile, but can be changed:
 - `$NGINX_NJK_TEMPLATE_DIR` - directories, where template NGINX configs are placed (final configs are placed in `/etc/nginx`), defaults to `/nginx-configs-templates`.
 
 The following is expected from the backends:
-- Correctly respond to GET, HEAD, and POST requests to dynamic resources (`$NGINX_MAIN_BACKEND`) and WebSocket requests to WebSocket resources (`$NGINX_CHAT_BACKEND` and `$NGINX_GAME_BACKEND`).
+- Correctly respond to GET, HEAD, and POST requests to dynamic resources (`$NGINX_BACKEND`) and WebSocket requests to WebSocket resources (`$NGINX_WEBSOCKETS`).
 - Correctly manage TLS Early Data by preventing request resubmission (processing the `Early-Data` header passed).
 - Correctly process `Origin` and `Referer` headers (preventing requests that shouldn't come from external sites).
 - Correctly manage application-level rate-limiting.
@@ -51,7 +51,7 @@ The following is expected from the backends:
 
 The following is expected from the configuration done by environment variables:
 - Provide an endpoint at `$NGINX_REPORT_URL` for sending error and violation reports.
-- Provide a trusted DNS resolver at `$NGINX_RESOLVER`, being able to resolve OCSP stampling server and `$NGINX_MAIN_BACKEND`, `$NGINX_CHAT_BACKEND`, and `$NGINX_GAME_BACKEND`'s IPs.
+- Provide a trusted DNS resolver at `$NGINX_RESOLVER`, being able to resolve OCSP stampling server, `$NGINX_BACKEND`'s IP, and IPs of WebSocket backends.
 - Provide error pages at `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `NGINX_ERROR_TOO_EARLY`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE`.
 - Provide correct SSL files at `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS`, including OCSP server URL and [signed certificate timestamps (SCTs)](https://en.wikipedia.org/wiki/Certificate_Transparency).
 - Provide static files in `$NGINX_STATIC`, including empty files with their original names and their gzipped versions.
@@ -61,7 +61,7 @@ The following is expected from the configuration done by environment variables:
 The proxy is guranteed to:
 - Work on Linux 4.5+ servers (for example, Debian 9+, Ubuntu 16.10+, RHEL 8+, or Fedora 24+).
 - Work for clients running Chrome 32+, Edge 18+, Safari 14+, Firefox 65+, Opera 20+, Samsung Internet 5+ browsers on Windows 7+, Android 4.4.2+, macOS 11+, and generally all Linuxes with OpenSSL 1.0.1+ installed.
-- Manage GET requests for static files (optionally with BLAKE3 hash appended to name), WebSocket requests for WebSocket URLs (`$NGINX_CHAT_WEBSOCKET_URL` and `$NGINX_GAME_WEBSOCKET_URL`), GET and POST requests for dynamic resources.
+- Manage GET requests for static files, WebSocket requests for WebSocket resources, GET and POST requests for dynamic resources.
 - Manage SSL.
 - Manage on-the-fly GZIP compression and serving pre-gzipped files.
 - Manage caching.
