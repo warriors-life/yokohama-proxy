@@ -17,9 +17,9 @@ The configuration uses the following environment variables for controlling it:
 - `$NGINX_DOMAIN_NAME` - the domain name of the website.
 - `$NGINX_REPORT_URL` - URL (absolute), to which error reports are send (such as from `Report-Endpoints` header).
 - `$NGINX_RESOLVER` - seeds the NGINX [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive.
-- `$NGINX_MAIN_BACKEND`, `$NGINX_CHAT_BACKEND`, and `$NGINX_GAME_BACKEND` - IP addresses or domain names (potentially with ports) of Warriors Life main backend, chat backend, and game backend.
+- `$NGINX_MAIN_BACKEND` - IP address or domain name (potentially with port) of Warriors Life main backend.
 - `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `NGINX_ERROR_TOO_EARLY`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE` - URLs (relative) of 400 and 405, 403, 404 and 416, 413 and 414 and 431, 425 (returned as 400), 429, 500, 502 and 503 and 504 (returned as 503) error pages.
-- `$NGINX_CHAT_WEBSOCKET_URL` and `$NGINX_GAME_WEBSOCKET_URL` - URLs (relative), on which a client can connect to chat and game backends via WebSockets.
+- `$NGINX_WEBSOCKETS` - a JSON object specifying an array of arrays containing three elements, which are a WebSocket resource name, the regexp for URL (relative) where it can be accessed, and its backend (IP address or domain name, potentially with port).
 - `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS` - paths to SSL certificate, SSL certificate key, Diffie-Hellman parameters, and trusted CA certificates file.
 - `$NGINX_DUMPS` - directory, where NGINX places crash dumps.
 - `$NGINX_STATIC` - directory, where static files (gzipped, brotlied, and empty originals) are located.
@@ -27,6 +27,7 @@ The configuration uses the following environment variables for controlling it:
 - `$NGINX_AUTH_USERS` - path to users and passwords file used for authentication.
 
 Following environment variables are set in Dockerfile, but can be changed:
+- `$NGINX_STATIC_IMMUTABLE_REGEXP`, `$NGINX_STATIC_MUTABLE_REGEXP`, and `$NGINX_DYNAMIC_REGEXP` - the regexps for detecting whether a given URL (relative) is a static immutable file, static mutable file, or dynamic file. Default to `^((?:/[\w-]+)+)-[0-9a-f]{64}(\.[a-z0-9]+)$` (filename-32bytehash.extension), `^((?:/[\w-]+)+)(\.[a-z0-9]+)$` (filename.extension), and `^((?:/[\w-]+)+|/)$` (filename or `/`).
 - `$NGINX_USER` - the user that NGINX uses, defaults to `nginx`.
 - `$NGINX_ACCESS_LOG` and `$NGINX_ERROR_LOG` - files where NGINX logs requests and errors, default to `/var/log/nginx/access.log` and `/var/log/nginx/error.log`, which are symbolic links to `stdout` and `stderr`.
 - `$NGINX_NJK_TEMPLATE_DIR` - directories, where template NGINX configs are placed (final configs are placed in `/etc/nginx`), defaults to `/nginx-configs-templates`.
