@@ -13,11 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Clarify in README versions where proxy runs ([`3ba53b`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/3ba53b7edcfbe82ff7e5d8fca0acb2fec21f755e)).
 - Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk) (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/41).
-- Updated to NGINX 1.25.1 (...).
+- Updated to NGINX 1.25.1 ([`0c23f4`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/0c23f46e1dd589f41a1ae7efa7cb695021710389)).
 
 ### Removed
 - A TODO about removing "Server: nginx" header entirely ([`01dc10`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/01dc10f6fc2bfe89fc00eca5da017fce4cdfe1b6)).
-- Support for HTTP/2 Server Push for preloading (...).
+- Support for HTTP/2 Server Push for preloading ([`0c23f4`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/0c23f46e1dd589f41a1ae7efa7cb695021710389)).
 
 ## [0.0.1] - 2023-05-28
 
