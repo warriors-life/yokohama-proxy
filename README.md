@@ -47,7 +47,7 @@ The following is expected from the backends:
 - Properly manage Client Hints headers.
 - Properly manage `Clear-Site-Data` header.
 - Provide an endpoint at `$NGINX_REPORT_URL` for sending error and violation reports.
-- Return only 101, 200, 204, 206, 304, 400, 403, 404, 413, 414, 416, 425, 426, 429, 431, 500, 503 HTTP status codes.
+- Return only 101, 103, 200, 204, 206, 304, 400, 403, 404, 413, 414, 416, 425, 426, 429, 431, 500, 503 HTTP status codes.
 
 The following is expected from the configuration done by environment variables:
 - Provide an endpoint at `$NGINX_REPORT_URL` for sending error and violation reports.
