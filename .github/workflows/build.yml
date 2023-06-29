@@ -22,7 +22,7 @@ jobs:
     with:
       image-name: ${{ github.repository }}
       node-code-pre-test: |
-        export $(xargs < test.env) && cat test.env >> $GITHUB_ENV
+        export $(xargs -0 < test.env) && cat test.env >> $GITHUB_ENV
         openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
         openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
         gzip -k server/static/*.{css,csv,html,ico,js,json,svg,txt,wasm,webmanifest}
@@ -48,7 +48,7 @@ jobs:
         uses: warriors-life/.warriors-life-workflows/test-docker-image@dev
         with:
           code: |
-            export $(xargs < test.env)
+            export $(xargs -0 < test.env)
             openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
             openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
             docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/server/ssl,dst=/ssl,ro ${{ needs.call-workflow.outputs.test-tag }} nginx -t
