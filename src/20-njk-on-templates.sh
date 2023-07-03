@@ -25,6 +25,7 @@ auto_njk() {
     output_path="$output_dir/$relative_path"
     entrypoint_log "$ME: Running njk on $template to $output_path"
     njk "$template" > "$output_path"
+	cat "$output_path"
   done
 }
 

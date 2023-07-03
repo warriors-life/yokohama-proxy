@@ -22,7 +22,7 @@ jobs:
     with:
       image-name: ${{ github.repository }}
       node-code-pre-test: | # https://unix.stackexchange.com/questions/157328/how-can-i-remove-all-comments-from-a-file
-        export $(sed '/^[[:blank:]]*#/d;s/#.*//' test.env | xargs -0) && cat test.env >> $GITHUB_ENV
+        export $(sed '/^[[:blank:]]*#/d;s/#.*//' test.env | xargs -0) && sed '/^[[:blank:]]*#/d;s/#.*//' test.env >> $GITHUB_ENV
         openssl req -x509 -config ssl-config/openssl-ca.conf -out server$NGINX_TRUSTED_CERTS -keyout ssl-config/ca.key -noenc
         openssl req -config ssl-config/openssl-cert.conf -CA server$NGINX_TRUSTED_CERTS -CAkey ssl-config/ca.key -out server$NGINX_CERT -keyout server$NGINX_CERT_KEY -noenc
         gzip -k server/static/*.{css,csv,html,ico,js,json,svg,txt,wasm,webmanifest}
