@@ -15,9 +15,11 @@ ENV NGINX_USER=nginx
 
 	# Clear /etc/nginx directory
 RUN rm -rf /etc/nginx && mkdir /etc/nginx && \
+	# Clear default links
+	rm -f /var/log/nginx/access.log && rm -f /var/log/nginx/error.log && \
 	# Link logs to stdout and stderr
 	ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG && \
-	# Remove unneeded sntrypoint scripts
+	# Remove unneeded entrypoint scripts
 	rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && rm -f /docker-entrypoint.d/20-envsubst-on-templates.sh && \
 	# Remove unneeded packages
 	apk del --no-network libintl tzdata && rm -f /usr/local/bin/envsubst && \
