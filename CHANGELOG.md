@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk) (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/41).
 - Updated to NGINX 1.25.1 ([`0c23f4`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/0c23f46e1dd589f41a1ae7efa7cb695021710389)).
-- Moved most tweakable parameters to environment variables ([`fcb9f9`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/fcb9f9d6c88f4cfdc18a8e4074c78d1326b4d167)).
-- Some cleanup and refactoring ([`fcb9f9`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/fcb9f9d6c88f4cfdc18a8e4074c78d1326b4d167)).
+- Moved most tweakable parameters to environment variables (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/44).
+- Some cleanup and refactoring (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/44).
 
 ### Removed
 - A TODO about removing "Server: nginx" header entirely ([`01dc10`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/01dc10f6fc2bfe89fc00eca5da017fce4cdfe1b6)).
