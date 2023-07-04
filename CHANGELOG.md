@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Clarify in README versions where proxy runs ([`3ba53b`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/3ba53b7edcfbe82ff7e5d8fca0acb2fec21f755e)).
 - A TODO about redirecting unsupported browsers to a special page ([`ec9450`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/ec9450d16986088c757e3f6a746102eaea79beba)).
 - WebSockets are now specified in a different way and support for overriding static/dynamic files URL regexps was added (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/43).
 
 ### Changed
-- Clarify in README versions where proxy runs ([`3ba53b`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/3ba53b7edcfbe82ff7e5d8fca0acb2fec21f755e)).
 - Replace `envsubst` for templating with [`njk`](https://github.com/saghul/njk) (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/41).
 - Updated to NGINX 1.25.1 ([`0c23f4`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/0c23f46e1dd589f41a1ae7efa7cb695021710389)).
+- Moved most tweakable parameters to environment variables (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/44).
+- Some cleanup and refactoring (https://github.com/warriors-life/warriors-life-nginx-proxy/pull/44).
 
 ### Removed
 - A TODO about removing "Server: nginx" header entirely ([`01dc10`](https://github.com/warriors-life/warriors-life-nginx-proxy/commit/01dc10f6fc2bfe89fc00eca5da017fce4cdfe1b6)).

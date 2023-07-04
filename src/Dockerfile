@@ -15,14 +15,16 @@ ENV NGINX_USER=nginx
 
 	# Clear /etc/nginx directory
 RUN rm -rf /etc/nginx && mkdir /etc/nginx && \
+	# Clear default links
+	rm -f /var/log/nginx/access.log && rm -f /var/log/nginx/error.log && \
 	# Link logs to stdout and stderr
 	ln -sf /dev/stdout $NGINX_ACCESS_LOG && ln -sf /dev/stderr $NGINX_ERROR_LOG && \
-	# Remove unneeded sntrypoint scripts
+	# Remove unneeded entrypoint scripts
 	rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && rm -f /docker-entrypoint.d/20-envsubst-on-templates.sh && \
 	# Remove unneeded packages
 	apk del --no-network libintl tzdata && rm -f /usr/local/bin/envsubst && \
 	# Build njk
-	apkArch="$(cat /etc/apk/arch)" && tempDir="$(mktemp -d)" && chown nobody:nobody "$tempDir" && apk add --no-cache --virtual .build-deps gcc=12.2.1_git20220924-r4 make=4.3-r1 cmake=3.24.4-r0 libc-dev=0.7.2-r3 git=2.38.5-r0 && su nobody -s /bin/sh -c "export HOME=\"$tempDir\" && cd \"$tempDir\" && git clone --recursive --depth 1 --branch master https://github.com/saghul/njk && cd njk && make" && apk del --no-network .build-deps && mv "$tempDir/njk/build/njk-linux-$apkArch" /usr/local/bin/njk && rm -rf "$tempDir"
+	tempDir="$(mktemp -d)" && chown nobody:nobody "$tempDir" && apk add --no-cache --virtual .build-deps gcc=12.2.1_git20220924-r4 make=4.3-r1 cmake=3.24.4-r0 libc-dev=0.7.2-r3 git=2.38.5-r0 && su nobody -s /bin/sh -c "export HOME=\"$tempDir\" && cd \"$tempDir\" && git clone --recursive --depth 1 --branch master https://github.com/saghul/njk && cd njk && make" && apk del --no-network .build-deps && mv "$tempDir/njk/build/njk" /usr/local/bin/njk && rm -rf "$tempDir"
 
 COPY --link 20-njk-on-templates.sh /docker-entrypoint.d/
 
