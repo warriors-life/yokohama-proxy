@@ -1,5 +1,7 @@
-# Warriors Life NGINX Proxy
-This is the configuration of the NGINX reverse proxy for Warriors Life.
+# Yokohama Proxy
+Yokohama Proxy is a Docker image based on NGINX for working as a reverse proxy.
+
+Yokohama Proxy is a part of the Yokohama Project, stay tuned for its other components!
 
 ## License
 See the [LICENSE](LICENSE) file.
@@ -11,13 +13,13 @@ See the [LICENSE](LICENSE) file.
 - [ ] Consider splitting into mulitple NGINX instances (one managing load balancing and rate limiting, others managing more complex stuff)?
 
 ## Documentation
-The NGINX configuration presented in this repository manages SSL, compression (on-the-fly, not static), caching, cookie flags, headers (except for some headers coming from backends), proxying to backends and load balancing, and basic rate limiting.
+Yokohama Proxy manages SSL, compression (on-the-fly, not static), caching, cookie flags, headers (except for some headers coming from backends), proxying to backends and load balancing, and basic rate limiting.
 
-The configuration uses the following environment variables for controlling it:
+Yokohama Proxy uses the following environment variables for controlling it:
 - `$NGINX_DOMAIN_NAME` - the domain name of the website.
 - `$NGINX_REPORT_URL` - URL (absolute), to which error reports are send (such as from `Report-Endpoints` header).
 - `$NGINX_RESOLVER` - seeds the NGINX [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive.
-- `$NGINX_BACKEND` - IP address or domain name (potentially with port) of Warriors Life main backend.
+- `$NGINX_BACKEND` - IP address or domain name (potentially with port) of the main backend used.
 - `$NGINX_ERROR_BAD_REQUEST`, `$NGINX_ERROR_FORBIDDEN`, `$NGINX_ERROR_NOT_FOUND`, `$NGINX_ERROR_TOO_LARGE`, `NGINX_ERROR_TOO_EARLY`, `$NGINX_ERROR_TOO_MANY_REQUESTS`, `$NGINX_ERROR_INTERNAL`, and `$NGINX_ERROR_SERVICE_UNAVAILABLE` - URLs (relative) of 400 and 405, 403, 404 and 416, 413 and 414 and 431, 425 (returned as 400), 429, 500, 502 and 503 and 504 (returned as 503) error pages.
 - `$NGINX_WEBSOCKETS` - a JSON object specifying an array of arrays containing three elements, which are a WebSocket resource name, the regexp for URL (relative) where it can be accessed, and its backend (IP address or domain name, potentially with port).
 - `$NGINX_CERT`, `$NGINX_CERT_KEY`, `$NGINX_DH_PARAMS`, and `$NGINX_TRUSTED_CERTS` - paths to SSL certificate, SSL certificate key, Diffie-Hellman parameters, and trusted CA certificates file.
@@ -59,7 +61,8 @@ The following is expected from the configuration done by environment variables:
 - Provide correct .htpasswd file at `$NGINX_AUTH_USERS` if `NGINX_AUTH_REALM` is not `off`.
 - Make sure all needed files and directories are readable and/or writable. <!--- # TODO: List them (FEAT) -->
 
-The proxy is guranteed to:
+Yokohama Proxy is guranteed to:
+- Work on amd64 and arm64 architectures.
 - Work on Linux 4.5+ servers (for example, Debian 9+, Ubuntu 16.10+, RHEL 8+, or Fedora 24+).
 - Work for clients running Chrome 32+, Edge 18+, Safari 14+, Firefox 65+, Opera 20+, Samsung Internet 5+ browsers on Windows 7+, Android 4.4.2+, macOS 11+, and generally all Linuxes with OpenSSL 1.0.1+ installed.
 - Manage GET requests for static files, WebSocket requests for WebSocket resources, GET and POST requests for dynamic resources.
@@ -68,5 +71,5 @@ The proxy is guranteed to:
 - Manage caching.
 - Manage cookie flags.
 - Manage headers.
-- Basic load balancing.
-- Rate limiting.
+- Do basic load balancing.
+- Do rate limiting.
