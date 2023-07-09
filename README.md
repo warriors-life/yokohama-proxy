@@ -62,7 +62,7 @@ The following is expected from the configuration done by environment variables:
 - Make sure all needed files and directories are readable and/or writable. <!--- # TODO: List them (FEAT) -->
 
 Yokohama Proxy is guranteed to:
-- Work on amd64 and arm64 architectures.
+- Work on amd64 processor architecture.
 - Work on Linux 4.5+ servers (for example, Debian 9+, Ubuntu 16.10+, RHEL 8+, or Fedora 24+).
 - Work for clients running Chrome 32+, Edge 18+, Safari 14+, Firefox 65+, Opera 20+, Samsung Internet 5+ browsers on Windows 7+, Android 4.4.2+, macOS 11+, and generally all Linuxes with OpenSSL 1.0.1+ installed.
 - Manage GET requests for static files, WebSocket requests for WebSocket resources, GET and POST requests for dynamic resources.
