@@ -1,3 +1,6 @@
+> **Warning**
+> The proxy (and all other developing Yokohama Project's components) is currently very unstable, missing a lot of features, and containing a lot of bugs. Use it on your own risk.
+
 # Yokohama Proxy
 Yokohama Proxy is a Docker image based on NGINX for working as a reverse proxy.
 
@@ -40,7 +43,7 @@ The following is expected from the backends:
 - Correctly manage TLS Early Data by preventing request resubmission (processing the `Early-Data` header passed).
 - Correctly process `Origin` and `Referer` headers (preventing requests that shouldn't come from external sites).
 - Correctly manage application-level rate-limiting.
-- Correctly manage `ETag` and `If-None-Match` headers for cacheable resources. Cacheable resources should also return correct `Cache-Control` header (uncacheable should return the `Cache-Control` header passed).
+- Correctly manage `ETag` and `If-None-Match` headers for cacheable resources. Cacheable resources should also return correct `Cache-Control` header (uncacheable should return the `Cache-Control` header passed by proxy).
 - Correctly manage `Content-Disposition`/`Language`/`Length`/`Type` headers. Note that `Content-Encoding` is not included (NGINX will gzip or brotli the response itself provided `Content-Type` is compressable).
 - Correctly process `Accept-Language` header.
 - Correctly manage `Content-Security`/`Permissions`/`Document`/`Feature-Policy` headers (with the defaults being those passed from the proxy).
@@ -65,6 +68,7 @@ Yokohama Proxy is guranteed to:
 - Work on amd64 processor architecture.
 - Work on Linux 4.5+ servers (for example, Debian 9+, Ubuntu 16.10+, RHEL 8+, or Fedora 24+).
 - Work for clients running Chrome 32+, Edge 18+, Safari 14+, Firefox 65+, Opera 20+, Samsung Internet 5+ browsers on Windows 7+, Android 4.4.2+, macOS 11+, and generally all Linuxes with OpenSSL 1.0.1+ installed.
+- Support both IPv4 and IPv6 requests.
 - Manage GET requests for static files, WebSocket requests for WebSocket resources, GET and POST requests for dynamic resources.
 - Manage SSL.
 - Manage on-the-fly GZIP compression and serving pre-gzipped files.
