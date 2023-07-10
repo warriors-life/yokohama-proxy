@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some cleanup and refactoring (https://github.com/warriors-life/yokohama-proxy/pull/44).
 - Rename to Yokohama Proxy ([`6f7a3ac`](https://github.com/warriors-life/yokohama-proxy/commit/ef7a3ac596c6be51f4f8bd4999aa1733bd0617a8)).
 - Move some TODOs to Issues ([`9211603`](https://github.com/warriors-life/yokohama-proxy/commit/9211603a961eb39bb8c0984870f3df4be473840e)).
+- Make the repository public.
 
 ### Removed
 - A TODO about removing "Server: nginx" header entirely ([`01dc10f`](https://github.com/warriors-life/yokohama-proxy/commit/01dc10f6fc2bfe89fc00eca5da017fce4cdfe1b6)).
