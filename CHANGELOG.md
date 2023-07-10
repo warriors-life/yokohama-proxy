@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2023-07-10
+
 ### Added
 - Clarify in README versions where proxy runs ([`3ba53b7`](https://github.com/warriors-life/yokohama-proxy/commit/3ba53b7edcfbe82ff7e5d8fca0acb2fec21f755e)).
 - A TODO about redirecting unsupported browsers to a special page ([`ec9450d`](https://github.com/warriors-life/yokohama-proxy/commit/ec9450d16986088c757e3f6a746102eaea79beba)).
@@ -31,5 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `nginx -t` and Gixy tests ([`dccd9ca`](https://github.com/warriors-life/yokohama-proxy/commit/dccd9ca53d6ed98cb2c9ee99e3be2893e655d814)).
 - Added some unit tests (https://github.com/warriors-life/yokohama-proxy/pull/38).
 
-[Unreleased]: https://github.com/warriors-life/yokohama-proxy/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/warriors-life/yokohama-proxy/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/warriors-life/yokohama-proxy/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/warriors-life/yokohama-proxy/releases/tag/v0.0.1
