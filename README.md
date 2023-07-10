@@ -7,7 +7,7 @@ Yokohama Proxy is a Docker image based on NGINX for working as a reverse proxy.
 Yokohama Proxy is a part of the Yokohama Project, stay tuned for its other components!
 
 ## License
-See the [LICENSE](LICENSE) file.
+[MIT](LICENSE).
 
 ## TODO
 - [ ] TODOs in configuration files.
