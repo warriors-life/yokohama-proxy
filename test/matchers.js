@@ -140,7 +140,7 @@ function toHaveCorrectReportHeaders(res) {
 	const reportURL = process.env.NGINX_REPORT_URL;
 
 	return toHaveCorrectHeaders.call(this, res, {
-		'Report-Endpoints': `endpoint="${reportURL}", default="${reportURL}"`,
+		'Reporting-Endpoints': `endpoint="${reportURL}", default="${reportURL}"`,
 		'NEL': '{ "report_to": "endpoint", "include_subdomains": true, "max_age": 2592000 }',
 		'Report-To': `{ "group": "endpoint", "include_subdomains": true, "max_age": 2592000, "endpoints": [ { "url": "${reportURL}" } ] }`
 	});
