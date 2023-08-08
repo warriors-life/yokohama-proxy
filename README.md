@@ -40,10 +40,11 @@ Following environment variables are set in Dockerfile, but can be changed:
 
 The following is expected from the backends:
 - Correctly respond to GET, HEAD, and POST requests to dynamic resources (`$NGINX_BACKEND`) and WebSocket requests to WebSocket resources (`$NGINX_WEBSOCKETS`).
+- Support range requests.
 - Correctly manage TLS Early Data by preventing request resubmission (processing the `Early-Data` header passed).
 - Correctly process `Origin` and `Referer` headers (preventing requests that shouldn't come from external sites).
 - Correctly manage application-level rate-limiting.
-- Correctly manage `ETag` and `If-None-Match` headers for cacheable resources. Cacheable resources should also return correct `Cache-Control` header (uncacheable should return the `Cache-Control` header passed by proxy).
+- Correctly manage `ETag` and `If-None-Match` headers for cacheable resources. All resources should also return correct `Cache-Control` header.
 - Correctly manage `Content-Disposition`/`Language`/`Length`/`Type` headers. Note that `Content-Encoding` is not included (NGINX will gzip or brotli the response itself provided `Content-Type` is compressable).
 - Correctly process `Accept-Language` header.
 - Correctly manage `Content-Security`/`Permissions`/`Document`/`Feature-Policy` headers (with the defaults being those passed from the proxy).
