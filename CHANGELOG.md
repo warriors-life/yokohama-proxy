@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Respond with 403 error code instead of 400 on POST requests with invalid referrers (...).
+
 ### Fixed
 - Fix `Reporting-Endpoints` header incorrectly named as `Report-Endpoints` (...).
 
