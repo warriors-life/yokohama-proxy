@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4.3
-FROM nginx:1.25.1-alpine3.17-slim@sha256:3b29f9ec76a085552a6ad469b84711642b2421c7c44d2b765ca8d9e8fb25c4e8
+FROM nginx:1.25.2-alpine3.18-slim@sha256:4e83c311a9b1e1dc4640e85c6ee875f14084100c29d36a8dc39316b170be7181
 
 LABEL maintainer="Warriors Life <info@warriorslife.site>"
 
