@@ -40,6 +40,7 @@ docker run --rm --env-file test.env --mount type=bind,src="$(pwd)"/server/ssl,ds
 
 Running [Gixy](https://github.com/dvershinin/gixy) test (configuration linter):
 ```sh
+cd test
 docker run --rm --env-file test.env --mount type=volume,src=nginx-conf,dst=/etc/nginx your-test-tag nginx -v
 docker run --rm --mount type=volume,src=nginx-conf,dst=/etc/nginx,ro getpagespeed/gixy:v0.1.22@sha256:3721944f812a94f4de0f92e0e31d938381abd6fed1f8f64a5cd7abddf063012b
 ```
