@@ -1,7 +1,7 @@
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7774/badge)](https://www.bestpractices.dev/projects/7774)
-
 > **Warning**
 > The proxy (and all other developing Yokohama Project's components) is currently very unstable, missing a lot of features, and containing a lot of bugs. Use it on your own risk.
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7774/badge)](https://www.bestpractices.dev/projects/7774)
 
 # Yokohama Proxy
 Yokohama Proxy is a Docker image based on NGINX for working as a reverse proxy. You can find it on [GitHub Container Registry](https://github.com/warriors-life/yokohama-proxy/pkgs/container/yokohama-proxy) as `ghcr.io/warriors-life/yokohama-proxy` or on [Docker Hub](https://hub.docker.com/r/warriorslife/yokohama-proxy) as `warriorslife/yokohama-proxy`.
@@ -10,6 +10,9 @@ Yokohama Proxy is a part of the Yokohama Project, stay tuned for its other compo
 
 ## License
 [MIT](LICENSE).
+
+## Contributing
+Feel free to [open an issue](https://github.com/warriors-life/yokohama-proxy/issues/new) or [make a pull request](https://github.com/warriors-life/yokohama-proxy/pulls)! You can find contributing guidelines [here](CONTIBUTING.md) and as a start you can work on any issue labelled ["good first issue"](https://github.com/warriors-life/yokohama-proxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 ## TODO
 - [ ] TODOs in configuration files.
