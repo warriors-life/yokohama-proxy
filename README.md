@@ -2,7 +2,6 @@
 > The proxy (and all other developing Yokohama Project's components) is currently very unstable, missing a lot of features, and containing a lot of bugs. Use it on your own risk.
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7774/badge)](https://www.bestpractices.dev/projects/7774)
-
 # Yokohama Proxy
 Yokohama Proxy is a Docker image based on NGINX for working as a reverse proxy. You can find it on [GitHub Container Registry](https://github.com/warriors-life/yokohama-proxy/pkgs/container/yokohama-proxy) as `ghcr.io/warriors-life/yokohama-proxy` or on [Docker Hub](https://hub.docker.com/r/warriorslife/yokohama-proxy) as `warriorslife/yokohama-proxy`.
 
