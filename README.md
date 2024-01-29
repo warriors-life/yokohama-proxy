@@ -1,4 +1,4 @@
-> **Warning**
+> [!WARNING]
 > The proxy (and all other developing Yokohama Project's components) is currently very unstable, missing a lot of features, and containing a lot of bugs. Use it on your own risk.
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7774/badge)](https://www.bestpractices.dev/projects/7774)
