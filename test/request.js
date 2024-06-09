@@ -29,7 +29,7 @@ export default async function request(path, {
 	const urlOrigin = proto + '://' + host;
 
 	const req = superagent[method.toLowerCase()](urlOrigin + encodeURI(path));
-	req.connect({ [host]: { host: ipv6 ? '::1' : '127.0.0.1', port: proxyPort } });
+	req.connect({ [host]: { host: ipv6 ? '[::1]' : '127.0.0.1', port: proxyPort } });
 
 	if (http2) req.http2();
 	if (secure) req.ca(caCertificate);
