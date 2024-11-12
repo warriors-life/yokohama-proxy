@@ -31,6 +31,7 @@ jobs:
     permissions:
       security-events: write
       id-token: write
+      attestations: write
       packages: write
       contents: write
       actions: read
