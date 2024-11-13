@@ -15,6 +15,7 @@ Feel free to [open an issue](https://github.com/warriors-life/yokohama-proxy/iss
 
 ## TODO
 - [ ] TODOs in configuration files.
+- [ ] Tests should include catastrophic backtracking tests for regexps (e.g. regexps for file paths).
 - [ ] Convert configuration to config maps?
 - [ ] Possibly use NGINX Ingress controller instead of NGINX container?
 - [ ] Consider splitting into mulitple NGINX instances (one managing load balancing and rate limiting, others managing more complex stuff)?
